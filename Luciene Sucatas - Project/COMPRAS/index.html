@@ -8,7 +8,7 @@
 </head>
 <body>
   <header>
-    <h1>Comprar Material</h1>
+    <h1>Controle de Compras e Caixa</h1>
   </header>
 
   <nav class="sidebar">
@@ -17,7 +17,7 @@
       <li><a href="#">Caminhões</a></li>
       <li><a href="#">Saídas</a></li>
       <li><a href="#">Compras</a></li>
-      <li><a href="CAIXA/index.html">Caixa</a></li> 
+      <li><a href="fechamento_caixa.html">Caixa</a></li>
     </ul>
   </nav>
 
@@ -27,17 +27,17 @@
       <div class="material-inputs">
         <select id="material-list">
           <option value="Ferro">Ferro Pesado</option>
-          <option value="Cimento">PET</option>
-          <option value="Areia">Sucata</option>
-          <option value="Madeira">Perfil</option>
+          <option value="PET">PET</option>
+          <option value="Sucata">Sucata</option>
+          <option value="Perfil">Perfil</option>
           <option value="Cobre">Cobre</option>
           <option value="Latinha">Latinha</option>
           <option value="Panela">Panela</option>
           <option value="Lataria">Lataria</option>
         </select>
-        <input type="number" id="material-value" placeholder="Valor por kg (R$)">
-        <input type="number" id="material-kg" placeholder="Quantidade em kg">
-        <button id="add-material-btn">Adicionar Material</button>
+        <input type="number" id="material-value" placeholder="Valor por kg (R$)" class="input">
+        <input type="number" id="material-kg" placeholder="Quantidade em kg" class="input">
+        <button id="add-material-btn" class="btn-primary">Adicionar Material</button>
       </div>
     </section>
 
@@ -47,12 +47,12 @@
       <div class="total-container">
         <h3>Valor Total: R$<span id="total-value">0,00</span></h3>
       </div>
-      <select id="payment-method">
+      <select id="payment-method" class="input">
         <option value="Dinheiro">Dinheiro</option>
         <option value="PIX">PIX</option>
       </select>
-      <button id="finalize-btn">Finalizar Compra</button>
-      <button id="print-btn">Imprimir</button>
+      <button id="finalize-btn" class="btn-primary">Finalizar Compra</button>
+      <button id="print-btn" class="btn-secondary">Imprimir</button>
     </section>
 
     <section class="history-section">
