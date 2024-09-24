@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Compras</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Comprar Material</h1>
+  </header>
+
+  <nav class="sidebar">
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Caminhões</a></li>
+      <li><a href="#">Saídas</a></li>
+      <li><a href="#">Compras</a></li>
+      <li><a href="CAIXA/index.html">Caixa</a></li> 
+    </ul>
+  </nav>
+
+  <main>
+    <section class="material-section">
+      <h2>Escolha o Material</h2>
+      <div class="material-inputs">
+        <select id="material-list">
+          <option value="Ferro">Ferro Pesado</option>
+          <option value="Cimento">PET</option>
+          <option value="Areia">Sucata</option>
+          <option value="Madeira">Perfil</option>
+          <option value="Cobre">Cobre</option>
+          <option value="Latinha">Latinha</option>
+          <option value="Panela">Panela</option>
+          <option value="Lataria">Lataria</option>
+        </select>
+        <input type="number" id="material-value" placeholder="Valor por kg (R$)">
+        <input type="number" id="material-kg" placeholder="Quantidade em kg">
+        <button id="add-material-btn">Adicionar Material</button>
+      </div>
+    </section>
+
+    <section class="list-section">
+      <h2>Lista de Compras</h2>
+      <ul id="shopping-list"></ul>
+      <div class="total-container">
+        <h3>Valor Total: R$<span id="total-value">0,00</span></h3>
+      </div>
+      <select id="payment-method">
+        <option value="Dinheiro">Dinheiro</option>
+        <option value="PIX">PIX</option>
+      </select>
+      <button id="finalize-btn">Finalizar Compra</button>
+      <button id="print-btn">Imprimir</button>
+    </section>
+
+    <section class="history-section">
+      <h2>Histórico de Compras</h2>
+      <ul id="purchase-history"></ul>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
