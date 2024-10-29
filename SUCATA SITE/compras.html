@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Compras</title>
+
+    <!-- Custom fonts for this template -->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css/estilos-compras.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Luciene Sucatas</div>
+            </a>
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Home</span></a>
+            </li>
+            <hr class="sidebar-divider">
+            <li class="nav-item active">
+                <a class="nav-link" href="compras.html">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Compras</span>
+                </a>
+            </li>
+            <li class="nav-item">
+             <a class="nav-link" href="saidas.html">
+                <i class="fas fa-fw fa-sign-out-alt"></i>
+                <span>Saídas</span>
+        </a>
+    </li>
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"></nav>
+
+                <!-- Container -->
+                <div class="container-fluid">
+                    <h1 class="h3 mb-4 text-gray-800">Compras de Material</h1>
+
+                    <!-- Formulário de compras -->
+                    <div class="d-flex">
+                        <form class="mr-5">
+                            <div class="form-group">
+                                <label for="material">Selecione o Material</label>
+                                <select class="form-control" id="material">
+                                    <option value="metal">Metal</option>
+                                    <option value="cobre">Cobre</option>
+                                    <option value="lataria">Lataria</option>
+                                    <option value="ferro">Ferro pesado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="preco">Preço (R$ por kg)</label>
+                                <input type="number" class="form-control" id="preco" placeholder="Preço">
+                            </div>
+                            <div class="form-group">
+                                <label for="peso">Peso (kg)</label>
+                                <input type="number" class="form-control" id="peso" placeholder="Peso">
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="adicionarCompra()">Adicionar à Lista</button>
+                            <button type="button" class="btn btn-info" onclick="imprimirComprovante()">Imprimir Lista</button>
+                        </form>
+
+                        <!-- Área de Listagem de compras -->
+                        <div class="ml-5">
+                            <h5>Lista de Compras</h5>
+                            <table class="table table-bordered" id="tabela-compras">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Valor (por kg)</th>
+                                        <th>Peso (kg)</th>
+                                        <th>Total (R$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lista-compras">
+                                    <!-- Compras adicionadas aparecerão aqui -->
+                                </tbody>
+                            </table>
+                            <h3>Total: R$ <span id="total-compra">0.00</span></h3>
+                        </div>
+                    </div>
+
+                    <!-- Histórico de compras -->
+                    <div class="mt-4">
+                        <h5>Histórico de Compras</h5>
+                        <table class="table table-bordered" id="tabela-historico">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Total da Compra</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lista-historico">
+                                <!-- Histórico de compras aparecerá aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/funcoes-compras.js"></script>
+</body>
+</html>
