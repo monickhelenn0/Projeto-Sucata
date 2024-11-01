@@ -24,9 +24,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="index.html">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Home</span></a>
+                    <span>Home</span>
+                </a>
             </li>
-            <hr class="sidebar-divider">
             <li class="nav-item active">
                 <a class="nav-link" href="compras.html">
                     <i class="fas fa-fw fa-cog"></i>
@@ -34,13 +34,12 @@
                 </a>
             </li>
             <li class="nav-item">
-             <a class="nav-link" href="saidas.html">
-                <i class="fas fa-fw fa-sign-out-alt"></i>
-                <span>Saídas</span>
-        </a>
-    </li>
+                <a class="nav-link" href="saidas.html">
+                    <i class="fas fa-fw fa-sign-out-alt"></i>
+                    <span>Saídas</span>
+                </a>
+            </li>
         </ul>
-        <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -57,10 +56,24 @@
                             <div class="form-group">
                                 <label for="material">Selecione o Material</label>
                                 <select class="form-control" id="material">
+                                    <option value="bloco">Bloco</option>
+                                    <option value="cadeira_branca">Cadeira Branca</option>
+                                    <option value="catemba">Catemba</option>
+                                    <option value="chaparia">Chaparia</option>
+                                    <option value="chumbo">Chumbo</option>
+                                    <option value="cobre_descascado">Cobre Descascado</option>
+                                    <option value="ferro_lataria">Ferro Lataria</option>
+                                    <option value="ferro_pesado">Ferro Pesado</option>
+                                    <option value="inox">Inox</option>
+                                    <option value="latinhas">Latinhas</option>
                                     <option value="metal">Metal</option>
-                                    <option value="cobre">Cobre</option>
-                                    <option value="lataria">Lataria</option>
-                                    <option value="ferro">Ferro pesado</option>
+                                    <option value="panela">Panela</option>
+                                    <option value="perfil">Perfil</option>
+                                    <option value="plastico_misto">Plástico Misto</option>
+                                    <option value="pvc">PVC</option>
+                                    <option value="roda">Roda</option>
+                                    <option value="motor_pequeno">Motor Pequeno</option>
+                                    <option value="motor_grande">Motor Grande</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -72,6 +85,7 @@
                                 <input type="number" class="form-control" id="peso" placeholder="Peso">
                             </div>
                             <button type="button" class="btn btn-primary" onclick="adicionarCompra()">Adicionar à Lista</button>
+                            <button type="button" class="btn btn-success" onclick="finalizarCompra()">Finalizar Compra</button>
                             <button type="button" class="btn btn-info" onclick="imprimirComprovante()">Imprimir Lista</button>
                         </form>
 

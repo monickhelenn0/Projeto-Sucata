@@ -1,27 +1,20 @@
-// funcoes-compras.js
-
 let listaCompras = [];
-let totalGeral = 0;
+let totalCompras = 0;
 
-// Função para calcular o total de uma compra com base no preço e peso
-function calcularTotal(preco, peso) {
-    return parseFloat(preco) * parseFloat(peso);
-}
-
-// Adiciona uma compra à lista temporária e atualiza o total geral
+// Função para adicionar uma compra à lista
 function adicionarCompra() {
     const material = document.getElementById("material").value;
     const preco = parseFloat(document.getElementById("preco").value) || 0;
     const peso = parseFloat(document.getElementById("peso").value) || 0;
-    const total = calcularTotal(preco, peso).toFixed(2);
+    const total = preco * peso;
 
-    const compra = { material, preco, peso, total };
-    listaCompras.push(compra);
-    totalGeral += parseFloat(total);
+    listaCompras.push({ material, preco, peso, total });
+    totalCompras += total;
+
     atualizarListaCompras();
 }
 
-// Atualiza a lista de compras visível na página e o total geral
+// Atualizar lista de compras na página
 function atualizarListaCompras() {
     const lista = document.getElementById("lista-compras");
     lista.innerHTML = "";
@@ -32,22 +25,44 @@ function atualizarListaCompras() {
             <td>${compra.material}</td>
             <td>R$ ${compra.preco.toFixed(2)}</td>
             <td>${compra.peso} kg</td>
-            <td>R$ ${compra.total}</td>
+            <td>R$ ${compra.total.toFixed(2)}</td>
         `;
         lista.appendChild(row);
     });
 
-    document.getElementById("total-compra").innerText = totalGeral.toFixed(2);
+    document.getElementById("total-compra").innerText = totalCompras.toFixed(2);
 }
 
-// Função para impressão da lista de compras
+// Função para finalizar a compra e mover para o histórico
+function finalizarCompra() {
+    if (listaCompras.length === 0) {
+        alert("Adicione itens antes de finalizar a compra.");
+        return;
+    }
+
+    const data = new Date().toLocaleDateString();
+    const totalCompra = totalCompras;
+    
+    const historico = document.getElementById("lista-historico");
+    const row = document.createElement("tr");
+    row.innerHTML = `
+        <td>${data}</td>
+        <td>R$ ${totalCompra.toFixed(2)}</td>
+        <td><button onclick="verDetalhesCompra('${data}')">Ver Detalhes</button></td>
+    `;
+    historico.appendChild(row);
+
+    // Resetar lista e total após finalizar
+    listaCompras = [];
+    totalCompras = 0;
+    atualizarListaCompras();
+}
+
+// Função para imprimir apenas a lista de compras
 function imprimirComprovante() {
-    const lista = document.getElementById("tabela-compras").outerHTML;
-    const total = document.getElementById("total-compra").outerHTML;
-    const novaJanela = window.open('', '', 'width=800, height=600');
-    novaJanela.document.write('<html><head><title>Comprovante de Compra</title></head><body>');
-    novaJanela.document.write(lista + total);
-    novaJanela.document.write('</body></html>');
-    novaJanela.document.close();
-    novaJanela.print();
+    const printContent = document.getElementById("tabela-compras").outerHTML;
+    const originalContent = document.body.innerHTML;
+    document.body.innerHTML = printContent;
+    window.print();
+    document.body.innerHTML = originalContent;
 }

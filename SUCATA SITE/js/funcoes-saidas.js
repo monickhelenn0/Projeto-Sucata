@@ -38,3 +38,7 @@ function atualizarListaSaidas() {
         lista.appendChild(row);
     });
 }
+function registrarSaida(valor) {
+    totalSaidas += valor;
+    localStorage.setItem("totalSaidas", totalSaidas);
+}

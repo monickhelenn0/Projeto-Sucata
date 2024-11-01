@@ -3,96 +3,115 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Valores do Dia</title>
-    <link href="css/estilos-dashboard.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Home</title>
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css/estilos-compras.css" rel="stylesheet">
+    <style>
+        /* Estilização adicional para o valor do Caixa Inicial */
+        #caixa-inicial-destaque {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4e73df; /* Cor de destaque */
+            margin-top: 10px;
+        }
+    </style>
 </head>
 
-<body>
+<body id="page-top">
     <div id="wrapper">
-        <!-- Menu Lateral -->
-        <ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.html">
-                <div class="sidebar-brand-text mx-3">LUCIENE SUCATAS</div>
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Luciene Sucatas</div>
             </a>
+
             <hr class="sidebar-divider my-0">
-            <li class="nav-item active">
+
+            <li class="nav-item">
                 <a class="nav-link" href="index.html">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Home</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="compras.html">
+                    <i class="fas fa-fw fa-cog"></i>
                     <span>Compras</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="saidas.html">
-            <i class="fas fa-fw fa-sign-out-alt"></i>
+                    <i class="fas fa-fw fa-minus-circle"></i>
                     <span>Saídas</span>
-        </a>
-    </li>
+                </a>
+            </li>
         </ul>
+        <!-- End of Sidebar -->
 
-        <!-- Conteúdo Principal -->
+        <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                    <h1 class="h3 mb-0 text-gray-800">Valores do Dia</h1>
-                </nav>
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"></nav>
 
-                <!-- Conteúdo da Página -->
                 <div class="container-fluid">
-                    <h2 class="text-center">Valores do Dia</h2>
+                    <h1 class="h3 mb-4 text-gray-800">Caixa Inicial e Registro Diário</h1>
 
-                    <!-- Seção de Cards -->
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card bg-light text-center">
-                                <h5>Caixa Inicial</h5>
-                                <p>R$ 0.00</p>
-                            </div>
+                    <!-- Cadastro de Caixa Inicial -->
+                    <form id="caixa-form">
+                        <div class="form-group">
+                            <label for="valor-dia">Valor do Dia (R$)</label>
+                            <input type="number" class="form-control" id="valor-dia" placeholder="Valor do dia">
                         </div>
-                        <div class="col-md-4">
-                            <div class="card bg-light text-center">
-                                <h5>Saídas/Compras</h5>
-                                <p>R$ 0.00</p>
-                            </div>
+
+                        <div class="form-group">
+                            <label for="data-dia">Data</label>
+                            <input type="date" class="form-control" id="data-dia" readonly>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card bg-light text-center">
-                                <h5>Entradas</h5>
-                                <p>R$ 0.00</p>
+
+                        <button type="button" class="btn btn-primary" onclick="salvarCaixaInicial()">Registrar Caixa Inicial</button>
+                    </form>
+
+                    <h3 class="mt-4">Caixa Inicial: <span id="caixa-inicial-destaque">R$ <span id="caixa-inicial">0.00</span></span></h3>
+
+                    <!-- Registro de Novos Valores -->
+                    <div class="mt-4">
+                        <h5>Registrar Novo Valor</h5>
+                        <form id="registro-valor-form">
+                            <div class="form-group">
+                                <label for="novo-valor">Valor Adicionado (R$)</label>
+                                <input type="number" class="form-control" id="novo-valor" placeholder="Valor">
                             </div>
-                        </div>
+                            <div class="form-group">
+                                <label for="forma-pagamento">Forma de Pagamento</label>
+                                <select class="form-control" id="forma-pagamento">
+                                    <option value="pix">PIX</option>
+                                    <option value="dinheiro">Dinheiro</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-success" onclick="adicionarValor()">Adicionar Valor</button>
+                        </form>
                     </div>
 
-                    <!-- Informações Extras -->
-                    <div class="row mt-4">
-                        <div class="col-md-6 text-center">
-                            <h4>Material + Comprado</h4>
-                            <p>0 Kg</p>
-                        </div>
-                        <div class="col-md-6 text-center">
-                            <h4>Material - Comprado</h4>
-                            <p>0 Kg</p>
-                        </div>
-                    </div>
-
-                    <!-- Informações Totais -->
-                    <div class="row mt-4">
-                        <div class="col-md-12 text-center">
-                            <h4>Valor Total</h4>
-                            <p>R$ 0.00</p>
-                        </div>
+                    <!-- Dados Atualizados das Páginas de Compras e Saídas -->
+                    <div class="mt-4">
+                        <h5>Resumo de Compras e Saídas</h5>
+                        <p>Total de Compras: R$ <span id="total-compras">0.00</span></p>
+                        <p>Total de Saídas: R$ <span id="total-saidas">0.00</span></p>
+                        <p>Última Forma de Pagamento: <span id="ultima-forma-pagamento">-</span></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="js/funcoes-dashboard.js"></script>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/funcoes-home.js"></script>
 </body>
 
 </html>
