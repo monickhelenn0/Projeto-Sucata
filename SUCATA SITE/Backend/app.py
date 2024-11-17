@@ -4,7 +4,6 @@ from routes.saidas import saidas_bp
 from routes.exclusoes import exclusoes_bp
 from routes.notas import notas_bp
 from database import init_db
-from flask import Flask
 
 app = Flask(__name__)
 
