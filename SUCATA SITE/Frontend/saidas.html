@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saídas</title>
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css/estilo-saidas.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Luciene Sucatas</div>
+            </a>
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="compras.html">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Compras</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="saidas.html">
+                    <i class="fas fa-fw fa-minus-circle"></i>
+                    <span>Saídas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="notas-caminhoes.html">
+                    <i class="fas fa-fw fa-file"></i>
+                    <span>Cadastro de Notas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="exclusoes.html">
+                    <i class="fas fa-fw fa-trash"></i>
+                    <span>Itens Excluídos</span>
+                </a>
+            </li>
+        </ul>
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"></nav>
+                <div class="container-fluid">
+                    <h1 class="h3 mb-4 text-gray-800">Saídas de Valores</h1>
+                    
+                    <!-- Formulário para Saídas -->
+                    <form>
+                        <div class="form-group">
+                            <label for="funcionario">Nome do Funcionário</label>
+                            <input type="text" class="form-control" id="funcionario" placeholder="Nome do Funcionário">
+                        </div>
+                        <div class="form-group">
+                            <label for="valor">Valor (R$)</label>
+                            <input type="number" class="form-control" id="valor" placeholder="Valor da Saída">
+                        </div>
+                        <div class="form-group">
+                            <label for="motivo">Motivo</label>
+                            <textarea class="form-control" id="motivo" rows="2" placeholder="Motivo da Saída"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="forma-pagamento">Forma de Pagamento</label>
+                            <select class="form-control" id="forma-pagamento">
+                                <option value="pix">PIX</option>
+                                <option value="dinheiro">Dinheiro</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="adicionarSaida()">Registrar Saída</button>
+                    </form>
+
+                    <!-- Histórico de Saídas -->
+                    <div class="mt-4">
+                        <h5>Histórico de Saídas</h5>
+                        <table class="table table-bordered" id="tabela-saidas">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Funcionário</th>
+                                    <th>Valor (R$)</th>
+                                    <th>Forma de Pagamento</th>
+                                    <th>Motivo</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lista-saidas">
+                                <!-- Saídas registradas aparecerão aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/funcoes-saidas.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then(() => console.log('Service Worker registrado com sucesso!'))
+            .catch((error) => console.error('Erro ao registrar o Service Worker:', error));
+        }
+    </script>
+    <script src="js/funcoes-saidas.js"></script>
+    <script src="js/funcoes-telegram.js"></script>    
+    <script>
+        const API_URL = "http://127.0.0.1:5000/api/saidas";
+    
+        async function listarSaidas() {
+            try {
+                const response = await fetch(API_URL);
+                const saidas = await response.json();
+    
+                const listaSaidas = document.getElementById("lista-saidas");
+                listaSaidas.innerHTML = saidas.map((saida) => `
+                    <tr>
+                        <td>${saida.data}</td>
+                        <td>${saida.funcionario}</td>
+                        <td>R$ ${saida.valor.toFixed(2)}</td>
+                        <td>${saida.formaPagamento}</td>
+                        <td>${saida.motivo}</td>
+                        <td><button class="btn btn-danger btn-sm" onclick="excluirSaida('${saida._id}')">Excluir</button></td>
+                    </tr>
+                `).join("");
+            } catch (error) {
+                console.error("Erro ao listar saídas:", error);
+            }
+        }
+    
+        async function criarSaida(dados) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(dados)
+                });
+    
+                if (response.ok) {
+                    alert("Saída criada com sucesso!");
+                    listarSaidas();
+                } else {
+                    throw new Error("Erro ao criar saída");
+                }
+            } catch (error) {
+                console.error("Erro ao criar saída:", error);
+            }
+        }
+    
+        async function excluirSaida(id) {
+            try {
+                const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+                if (response.ok) {
+                    alert("Saída excluída com sucesso!");
+                    listarSaidas();
+                } else {
+                    throw new Error("Erro ao excluir saída");
+                }
+            } catch (error) {
+                console.error("Erro ao excluir saída:", error);
+            }
+        }
+    
+        // Inicializar a listagem de saídas ao carregar a página
+        document.addEventListener("DOMContentLoaded", listarSaidas);
+    </script>    
+</body>
+</html>

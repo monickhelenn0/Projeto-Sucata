@@ -1,0 +1,3 @@
+[build]
+  publish = "Frontend"
+  command = "" # Deixe vazio se não precisar de build (HTML simples). Para React, seria "npm run build"
