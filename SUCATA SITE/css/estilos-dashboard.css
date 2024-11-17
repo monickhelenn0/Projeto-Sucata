@@ -1,153 +1,25 @@
-/* Reset básico */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    min-height: 100vh;
-    background-color: #f8f9fc;
+    background-color: var(--bg-color, #f8f9fc);
+    color: var(--text-color, #333);
 }
 
-/* Sidebar */
 .sidebar {
-    width: 250px;
-    background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+    background: linear-gradient(180deg, var(--sidebar-start, #4e73df), var(--sidebar-end, #224abe));
+}
+
+/* Modo escuro */
+body.dark-mode {
+    --bg-color: #2b2b2b;
+    --text-color: #f8f9fc;
+    --sidebar-start: #1e1e1e;
+    --sidebar-end: #333;
+}
+
+.dark-mode .sidebar .nav-link:hover {
+    background-color: #555;
+}
+
+.dark-mode .card {
+    background-color: #3a3a3a;
     color: #fff;
-    padding-top: 20px;
-    position: fixed;
-    height: 100vh;
-    transition: width 0.3s ease;
-}
-
-.sidebar .sidebar-brand {
-    font-size: 1.5em;
-    color: #fff;
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-.sidebar .nav-link {
-    color: #fff;
-    padding: 15px;
-    font-weight: bold;
-    display: block;
-    text-decoration: none;
-}
-
-.sidebar .nav-link:hover {
-    background-color: #2e59d9;
-    color: #fff;
-    border-radius: 5px;
-}
-
-.sidebar .nav-item.active .nav-link {
-    background-color: #2e59d9;
-    border-radius: 5px;
-}
-
-/* Content wrapper */
-#content-wrapper {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    padding: 20px;
-    background-color: #f8f9fc;
-    transition: margin-left 0.3s ease, width 0.3s ease;
-}
-
-.topbar {
-    padding: 15px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Cards */
-.card {
-    border: none;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.card h5 {
-    font-size: 1.2em;
-    color: #4e73df;
-    margin-bottom: 10px;
-}
-
-.card p {
-    font-size: 1.5em;
-    color: #333;
-}
-
-/* Informações Extras e Totais */
-.container-fluid h2,
-.container-fluid h4 {
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.row {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-
-.col-md-4, .col-md-6, .col-md-12 {
-    flex: 1;
-    max-width: 100%;
-    margin: 10px;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    /* Ajuste da Sidebar */
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-    }
-
-    #content-wrapper {
-        margin-left: 0;
-        width: 100%;
-    }
-
-    /* Reorganizando os Cards */
-    .row {
-        display: block;
-    }
-
-    .col-md-4, .col-md-6, .col-md-12 {
-        width: 100%;
-        margin: 10px 0;
-    }
-
-    /* Tamanho da fonte nos Cards e Títulos */
-    .card h5, .card p, .container-fluid h2, .container-fluid h4 {
-        font-size: 1.1em;
-    }
-}
-
-@media (max-width: 576px) {
-    .topbar h1 {
-        font-size: 1.5em;
-    }
-
-    .card h5, .card p {
-        font-size: 1em;
-    }
-
-    .container-fluid h2, .container-fluid h4 {
-        font-size: 1.2em;
-    }
 }

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compras</title>
-
-    <!-- Custom fonts for this template -->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="css/estilos-compras.css" rel="stylesheet">
+    <link href="css/estilo-compras.css" rel="stylesheet">
+    <!-- CSS do Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body id="page-top">
     <div id="wrapper">
@@ -35,8 +35,20 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="saidas.html">
-                    <i class="fas fa-fw fa-sign-out-alt"></i>
+                    <i class="fas fa-fw fa-minus-circle"></i>
                     <span>Saídas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="notas-caminhoes.html">
+                    <i class="fas fa-fw fa-file"></i>
+                    <span>Cadastro de Notas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="exclusoes.html">
+                    <i class="fas fa-fw fa-trash"></i>
+                    <span>Itens Excluídos</span>
                 </a>
             </li>
         </ul>
@@ -45,21 +57,15 @@
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"></nav>
-
-                <!-- Container -->
                 <div class="container-fluid">
                     <h1 class="h3 mb-4 text-gray-800">Compras de Material</h1>
 
-                    <!-- Formulário de compras -->
+                    <!-- Formulário de Compras -->
                     <div class="d-flex">
                         <form class="mr-5">
                             <div class="form-group">
                                 <label for="material">Selecione o Material</label>
                                 <select class="form-control" id="material">
-<<<<<<< HEAD
-=======
-                                    <option value="bateria">Bateria</option>
->>>>>>> f5a66acf78707e02d0396ef21cea9d4d24093656
                                     <option value="bloco">Bloco</option>
                                     <option value="cadeira_branca">Cadeira Branca</option>
                                     <option value="catemba">Catemba</option>
@@ -88,44 +94,54 @@
                                 <label for="peso">Peso (kg)</label>
                                 <input type="number" class="form-control" id="peso" placeholder="Peso">
                             </div>
+                            <div class="form-group">
+                                <label for="forma-pagamento">Forma de Pagamento</label>
+                                <select class="form-control" id="forma-pagamento">
+                                    <option value="pix">PIX</option>
+                                    <option value="dinheiro">Dinheiro</option>
+                                </select>
+                            </div>
                             <button type="button" class="btn btn-primary" onclick="adicionarCompra()">Adicionar à Lista</button>
                             <button type="button" class="btn btn-success" onclick="finalizarCompra()">Finalizar Compra</button>
-                            <button type="button" class="btn btn-info" onclick="imprimirComprovante()">Imprimir Lista</button>
+                            <button type="button" class="btn btn-info" onclick="imprimirLista()">Imprimir Lista</button>
                         </form>
 
-                        <!-- Área de Listagem de compras -->
+                        <!-- Lista de Compras -->
                         <div class="ml-5">
                             <h5>Lista de Compras</h5>
                             <table class="table table-bordered" id="tabela-compras">
                                 <thead>
                                     <tr>
                                         <th>Material</th>
-                                        <th>Valor (por kg)</th>
+                                        <th>Preço (R$ por kg)</th>
                                         <th>Peso (kg)</th>
                                         <th>Total (R$)</th>
+                                        <th>Ação</th>
                                     </tr>
                                 </thead>
                                 <tbody id="lista-compras">
-                                    <!-- Compras adicionadas aparecerão aqui -->
+                                    <!-- Itens serão preenchidos dinamicamente -->
                                 </tbody>
                             </table>
-                            <h3>Total: R$ <span id="total-compra">0.00</span></h3>
+                            <h3>Total Geral: R$ <span id="total-compra">0.00</span></h3>
                         </div>
                     </div>
 
-                    <!-- Histórico de compras -->
-                    <div class="mt-4">
+                    <!-- Histórico de Compras -->
+                    <div class="mt-5">
                         <h5>Histórico de Compras</h5>
+                        <input type="date" id="data-historico" class="form-control mb-3" onchange="filtrarHistoricoPorData()">
                         <table class="table table-bordered" id="tabela-historico">
                             <thead>
                                 <tr>
                                     <th>Data</th>
                                     <th>Total da Compra</th>
+                                    <th>Forma de Pagamento</th>
                                     <th>Ação</th>
                                 </tr>
                             </thead>
                             <tbody id="lista-historico">
-                                <!-- Histórico de compras aparecerá aqui -->
+                                <!-- Histórico será preenchido dinamicamente -->
                             </tbody>
                         </table>
                     </div>
@@ -134,9 +150,39 @@
         </div>
     </div>
 
+ <!-- Modal para Detalhes da Compra -->
+<div class="modal fade" id="detalhesModal" tabindex="-1" role="dialog" aria-labelledby="detalhesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detalhesModalLabel">Detalhes da Compra</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="detalhes-compra-body">
+                <!-- Os detalhes da compra serão carregados dinamicamente aqui -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
     <!-- Scripts -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/funcoes-compras.js"></script>
+    <!-- JS do Bootstrap e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then(() => console.log('Service Worker registrado com sucesso!'))
+            .catch((error) => console.error('Erro ao registrar o Service Worker:', error));
+        }
+    </script>
+    
 </body>
 </html>
