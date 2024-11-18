@@ -1,20 +1,18 @@
-from flask import Flask
 from routes.compras import compras_bp
 from routes.saidas import saidas_bp
 from routes.exclusoes import exclusoes_bp
 from routes.notas import notas_bp
 from database import init_db
+from flask import Flask
 
 app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Servidor Flask Funcionando!"
+    return "Backend funcionando!"
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
-app = Flask(__name__)
+    app.run()
 
 # Inicializar o banco de dados
 init_db()
