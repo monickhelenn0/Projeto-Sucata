@@ -1,3 +1,12 @@
 [build]
-  publish = "Frontend"
-  command = "" # Deixe vazio se não precisar de build (HTML simples). Para React, seria "npm run build"
+  base = "Frontend"         # Diretório onde está o código do frontend
+  publish = "Frontend"      # Diretório a ser publicado
+  command = "npm run build" # Comando de build (se necessário)
+
+[build.environment]
+  NODE_VERSION = "16"       # Certifique-se de usar uma versão Node.js compatível
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
