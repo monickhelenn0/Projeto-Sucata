@@ -1,10 +1,7 @@
 [build]
-  base = "Frontend"         # Diretório onde está o código do frontend
-  publish = "Frontend"      # Diretório a ser publicado
-  command = "npm run build" # Comando de build (se necessário)
-
-[build.environment]
-  NODE_VERSION = "16"       # Certifique-se de usar uma versão Node.js compatível
+  base = "SUCATA SITE/Frontend" # Caminho correto para o diretório Frontend
+  publish = "."                 # Publicar o conteúdo do diretório base
+  command = ""                  # Sem comando de build (HTML/CSS/JS simples)
 
 [[redirects]]
   from = "/*"
