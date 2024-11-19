@@ -99,78 +99,27 @@
         </div>
     </div>
 
+    <!-- Modal de Confirmação -->
+    <div class="modal fade" id="saidaConfirmadaModal" tabindex="-1" aria-labelledby="saidaConfirmadaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="saidaConfirmadaLabel">Saída Registrada</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    A saída foi registrada com sucesso!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/funcoes-saidas.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-            .then(() => console.log('Service Worker registrado com sucesso!'))
-            .catch((error) => console.error('Erro ao registrar o Service Worker:', error));
-        }
-    </script>
-    <script src="js/funcoes-saidas.js"></script>
-    <script src="js/funcoes-telegram.js"></script>    
-    <script>
-        const API_URL = "https://projeto-sucata.onrender.com";
-    
-        async function listarSaidas() {
-            try {
-                const response = await fetch(API_URL);
-                const saidas = await response.json();
-    
-                const listaSaidas = document.getElementById("lista-saidas");
-                listaSaidas.innerHTML = saidas.map((saida) => `
-                    <tr>
-                        <td>${saida.data}</td>
-                        <td>${saida.funcionario}</td>
-                        <td>R$ ${saida.valor.toFixed(2)}</td>
-                        <td>${saida.formaPagamento}</td>
-                        <td>${saida.motivo}</td>
-                        <td><button class="btn btn-danger btn-sm" onclick="excluirSaida('${saida._id}')">Excluir</button></td>
-                    </tr>
-                `).join("");
-            } catch (error) {
-                console.error("Erro ao listar saídas:", error);
-            }
-        }
-    
-        async function criarSaida(dados) {
-            try {
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(dados)
-                });
-    
-                if (response.ok) {
-                    alert("Saída criada com sucesso!");
-                    listarSaidas();
-                } else {
-                    throw new Error("Erro ao criar saída");
-                }
-            } catch (error) {
-                console.error("Erro ao criar saída:", error);
-            }
-        }
-    
-        async function excluirSaida(id) {
-            try {
-                const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-                if (response.ok) {
-                    alert("Saída excluída com sucesso!");
-                    listarSaidas();
-                } else {
-                    throw new Error("Erro ao excluir saída");
-                }
-            } catch (error) {
-                console.error("Erro ao excluir saída:", error);
-            }
-        }
-    
-        // Inicializar a listagem de saídas ao carregar a página
-        document.addEventListener("DOMContentLoaded", listarSaidas);
-    </script>    
 </body>
 </html>
