@@ -1,33 +1,7 @@
 let historicoSaidas = JSON.parse(localStorage.getItem("historicoSaidas")) || [];
 let exclusoes = JSON.parse(localStorage.getItem("exclusoes")) || [];
 
-// Enviar mensagens ao Telegram
-const enviarTelegram = async (mensagem) => {
-    const TELEGRAM_TOKEN = "<SEU_TOKEN_AQUI>";
-    const CHAT_ID = "<SEU_CHAT_ID_AQUI>";
-    const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                chat_id: CHAT_ID,
-                text: mensagem,
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error("Erro ao enviar mensagem para o Telegram.");
-        }
-    } catch (error) {
-        console.error("Erro ao enviar mensagem ao Telegram:", error);
-    }
-};
-
-// Adicionar uma nova saída
+// Função para adicionar uma saída
 function adicionarSaida() {
     const funcionario = document.getElementById("funcionario").value.trim();
     const valor = parseFloat(document.getElementById("valor").value) || 0;
@@ -41,30 +15,19 @@ function adicionarSaida() {
 
     const saida = { 
         data: new Date().toLocaleDateString(), 
-        funcionario, 
-        valor, 
-        motivo, 
-        formaPagamento 
+        funcionario, valor, motivo, formaPagamento 
     };
 
     historicoSaidas.push(saida);
     localStorage.setItem("historicoSaidas", JSON.stringify(historicoSaidas));
     atualizarListaSaidas();
+    atualizarSaidasHome();
 
-    // Atualizar totais no LocalStorage
-    if (formaPagamento === "dinheiro") {
-        const totalDinheiro = parseFloat(localStorage.getItem("totalSaidasDinheiro")) || 0;
-        localStorage.setItem("totalSaidasDinheiro", totalDinheiro + valor);
-    } else if (formaPagamento === "pix") {
-        const totalPix = parseFloat(localStorage.getItem("totalSaidasPix")) || 0;
-        localStorage.setItem("totalSaidasPix", totalPix + valor);
-    }
-
-    // Notificar o Telegram
-    enviarTelegram(`Nova saída registrada:\nFuncionário: ${funcionario}\nValor: R$ ${valor.toFixed(2)}\nMotivo: ${motivo}\nForma de Pagamento: ${formaPagamento}\nData: ${saida.data}`);
+    // Enviar notificação ao Telegram
+    enviarTelegram(`📤 *Nova Saída Registrada*:\n\n👤 Funcionário: ${saida.funcionario}\n💵 Valor: R$ ${saida.valor.toFixed(2)}\n📄 Motivo: ${saida.motivo}\n💳 Forma de Pagamento: ${saida.formaPagamento === "pix" ? "PIX" : "Dinheiro"}\n📅 Data: ${saida.data}`);
 }
 
-// Excluir uma saída
+// Função para excluir uma saída
 function excluirSaida(index) {
     const motivo = prompt("Informe o motivo para a exclusão:");
     if (!motivo || motivo.trim() === "") {
@@ -77,7 +40,7 @@ function excluirSaida(index) {
     localStorage.setItem("historicoSaidas", JSON.stringify(historicoSaidas));
     localStorage.setItem("exclusoes", JSON.stringify(exclusoes));
 
-    // Recalcular os totais
+    // Recalcular totais
     if (saidaRemovida.formaPagamento === "dinheiro") {
         const totalDinheiro = parseFloat(localStorage.getItem("totalSaidasDinheiro")) || 0;
         localStorage.setItem("totalSaidasDinheiro", totalDinheiro - saidaRemovida.valor);
@@ -89,11 +52,11 @@ function excluirSaida(index) {
     atualizarListaSaidas();
     atualizarSaidasHome();
 
-    // Notificar o Telegram
-    enviarTelegram(`Saída excluída:\nFuncionário: ${saidaRemovida.funcionario}\nValor: R$ ${saidaRemovida.valor.toFixed(2)}\nMotivo: ${motivo}`);
+    // Enviar notificação ao Telegram
+    enviarTelegram(`❌ *Saída Excluída*:\n\n👤 Funcionário: ${saidaRemovida.funcionario}\n💵 Valor: R$ ${saidaRemovida.valor.toFixed(2)}\n📄 Motivo da Exclusão: ${motivo}`);
 }
 
-// Atualizar a lista de saídas na interface
+// Atualizar a lista de saídas
 function atualizarListaSaidas() {
     const lista = document.getElementById("lista-saidas");
     lista.innerHTML = "";
@@ -112,7 +75,7 @@ function atualizarListaSaidas() {
     });
 }
 
-// Atualizar totais na página Home
+// Atualizar os totais na Home
 function atualizarSaidasHome() {
     const totalDinheiro = parseFloat(localStorage.getItem("totalSaidasDinheiro")) || 0;
     const totalPix = parseFloat(localStorage.getItem("totalSaidasPix")) || 0;
@@ -125,6 +88,24 @@ function atualizarSaidasHome() {
     document.getElementById("total-saidas-dinheiro").innerText = totalDinheiro.toFixed(2);
     document.getElementById("total-saidas-pix").innerText = totalPix.toFixed(2);
 }
+
+// Enviar mensagens ao Telegram
+const enviarTelegram = async (mensagem) => {
+    const TELEGRAM_TOKEN = "7670865041:AAFuZra_jwBXfACjc3ZBwee_GCrGrhYCCrc";
+    const CHAT_ID = "<SEU_CHAT_ID>";
+    const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: mensagem, parse_mode: "Markdown" }),
+        });
+        if (!response.ok) throw new Error("Erro ao enviar mensagem para o Telegram.");
+    } catch (error) {
+        console.error("Erro ao enviar mensagem ao Telegram:", error);
+    }
+};
 
 window.onload = function () {
     atualizarListaSaidas();
