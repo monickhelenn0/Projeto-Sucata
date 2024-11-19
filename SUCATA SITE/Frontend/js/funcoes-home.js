@@ -62,28 +62,22 @@ function atualizarTotaisHome() {
 }
 
 // Função para enviar resumo diário ao Telegram
-function enviarResumoTelegram() {
+function finalizarDia() {
     const totalCompradoDinheiro = parseFloat(localStorage.getItem("totalCompradoDinheiro")) || 0;
     const totalCompradoPix = parseFloat(localStorage.getItem("totalCompradoPix")) || 0;
     const totalSaidasDinheiro = parseFloat(localStorage.getItem("totalSaidasDinheiro")) || 0;
     const totalSaidasPix = parseFloat(localStorage.getItem("totalSaidasPix")) || 0;
 
-    // Buscar o maior valor retirado
-    const historicoSaidas = JSON.parse(localStorage.getItem("historicoSaidas")) || [];
-    const maiorSaida = historicoSaidas.sort((a, b) => b.valor - a.valor)[0] || { valor: 0 };
-
     const mensagem = `
-📊 *Resumo Diário:*
-🔵 Total Compras - Dinheiro: R$ ${totalCompradoDinheiro.toFixed(2)}
-🟢 Total Compras - PIX: R$ ${totalCompradoPix.toFixed(2)}
-🔴 Total Saídas - Dinheiro: R$ ${totalSaidasDinheiro.toFixed(2)}
-🟣 Total Saídas - PIX: R$ ${totalSaidasPix.toFixed(2)}
-
-💰 *Maior Saída do Dia:*
-- Valor: R$ ${maiorSaida.valor.toFixed(2) || "0.00"}
+📅 *Resumo do Dia*:
+🔵 Compras - Dinheiro: R$ ${totalCompradoDinheiro.toFixed(2)}
+🟢 Compras - PIX: R$ ${totalCompradoPix.toFixed(2)}
+🔴 Saídas - Dinheiro: R$ ${totalSaidasDinheiro.toFixed(2)}
+🟣 Saídas - PIX: R$ ${totalSaidasPix.toFixed(2)}
     `;
 
     enviarTelegram(mensagem);
+    alert("Resumo enviado ao Telegram!");
 }
 
 // Função para enviar mensagens ao Telegram
