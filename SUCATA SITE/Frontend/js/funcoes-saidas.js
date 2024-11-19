@@ -29,7 +29,7 @@ function adicionarSaida() {
 // Enviar mensagens ao Telegram
 const enviarTelegram = async (mensagem) => {
     const TELEGRAM_TOKEN = "7670865041:AAFuZra_jwBXfACjc3ZBwee_GCrGrhYCCrc";
-    const CHAT_ID = "@Sucatas_bot"; // Substitua pelo chat_id do grupo ou canal, se necessário
+    const CHAT_ID = "-4585457524";
     const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
     try {
@@ -91,3 +91,13 @@ const enviarTelegram = async (mensagem) => {
 
 // Carregar saídas ao abrir a página
 window.onload = atualizarListaSaidas;
+
+// Testar envio de mensagem ao Telegram
+function testeEnvioTelegram() {
+    const mensagem = "🚀 Teste de envio de mensagem ao Telegram!";
+    enviarTelegram(mensagem);
+}
+
+// Chamar a função ao carregar a página (para testar)
+// Comente a linha abaixo após testar:
+window.onload = testeEnvioTelegram;
