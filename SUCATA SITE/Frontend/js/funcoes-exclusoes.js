@@ -32,3 +32,27 @@ function carregarExclusoes() {
         }
     });
 }
+function filtrarExclusoes() {
+    const dataFiltro = document.getElementById("filtro-data").value;
+    const exclusoes = JSON.parse(localStorage.getItem("exclusoes")) || [];
+
+    const exclusoesFiltradas = exclusoes.filter((exclusao) => exclusao.data === dataFiltro);
+    atualizarExclusoes(exclusoesFiltradas);
+}
+
+function atualizarExclusoes(lista) {
+    const tabela = document.getElementById("tabela-exclusoes");
+    tabela.innerHTML = "";
+
+    lista.forEach((exclusao) => {
+        const row = `
+            <tr>
+                <td>${exclusao.data}</td>
+                <td>${exclusao.tipo}</td>
+                <td>${exclusao.valor}</td>
+                <td>${exclusao.motivo}</td>
+            </tr>
+        `;
+        tabela.innerHTML += row;
+    });
+}
