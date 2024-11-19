@@ -37,10 +37,8 @@ function excluirSaida(index) {
 
     const saidaRemovida = historicoSaidas.splice(index, 1)[0];
     exclusoes.push({ ...saidaRemovida, motivo, tipo: "Saída" });
-    localStorage.setItem("historicoSaidas", JSON.stringify(historicoSaidas));
-    localStorage.setItem("exclusoes", JSON.stringify(exclusoes));
 
-    // Recalcular totais
+    // Recalcular os totais
     if (saidaRemovida.formaPagamento === "dinheiro") {
         const totalDinheiro = parseFloat(localStorage.getItem("totalSaidasDinheiro")) || 0;
         localStorage.setItem("totalSaidasDinheiro", totalDinheiro - saidaRemovida.valor);
@@ -49,8 +47,13 @@ function excluirSaida(index) {
         localStorage.setItem("totalSaidasPix", totalPix - saidaRemovida.valor);
     }
 
+    localStorage.setItem("historicoSaidas", JSON.stringify(historicoSaidas));
+    localStorage.setItem("exclusoes", JSON.stringify(exclusoes));
+
     atualizarListaSaidas();
     atualizarSaidasHome();
+
+    alert("Saída excluída com sucesso.");
 
     // Enviar notificação ao Telegram
     enviarTelegram(`❌ *Saída Excluída*:\n\n👤 Funcionário: ${saidaRemovida.funcionario}\n💵 Valor: R$ ${saidaRemovida.valor.toFixed(2)}\n📄 Motivo da Exclusão: ${motivo}`);
