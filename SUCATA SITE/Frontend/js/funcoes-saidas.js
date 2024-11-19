@@ -26,26 +26,32 @@ function adicionarSaida() {
     const modal = new bootstrap.Modal(document.getElementById("saidaConfirmadaModal"));
     modal.show();
 
-    // Enviar notificação ao Telegram
-    enviarTelegram(`📤 Nova saída registrada: R$ ${valor.toFixed(2)} por ${funcionario}`);
-}
+// Enviar mensagens ao Telegram
+const enviarTelegram = async (mensagem) => {
+    const TELEGRAM_TOKEN = "7670865041:AAFuZra_jwBXfACjc3ZBwee_GCrGrhYCCrc";
+    const CHAT_ID = "@Sucatas_bot"; // Substitua pelo chat_id do grupo ou canal, se necessário
+    const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
-// Função para excluir uma saída
-function excluirSaida(index) {
-    const motivoExclusao = prompt("Informe o motivo para exclusão:");
-    if (!motivoExclusao) {
-        alert("A exclusão foi cancelada.");
-        return;
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: mensagem, parse_mode: "Markdown" }),
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            console.error("Erro ao enviar mensagem ao Telegram:", error.description);
+            alert(`Erro ao enviar mensagem ao Telegram: ${error.description}`);
+        } else {
+            console.log("Mensagem enviada ao Telegram com sucesso!");
+        }
+    } catch (error) {
+        console.error("Erro ao enviar mensagem ao Telegram:", error);
+        alert("Erro ao enviar mensagem ao Telegram. Verifique sua conexão ou configurações.");
     }
-
-    const saidaRemovida = historicoSaidas.splice(index, 1)[0];
-    exclusoes.push({ ...saidaRemovida, motivoExclusao });
-    localStorage.setItem("historicoSaidas", JSON.stringify(historicoSaidas));
-    localStorage.setItem("exclusoes", JSON.stringify(exclusoes));
-    atualizarListaSaidas();
-    alert("Saída excluída com sucesso!");
+};
 }
-
 // Atualizar a lista de saídas
 function atualizarListaSaidas() {
     const tabelaSaidas = document.getElementById("lista-saidas");
