@@ -92,7 +92,7 @@ function atualizarSaidasHome() {
 // Enviar mensagens ao Telegram
 const enviarTelegram = async (mensagem) => {
     const TELEGRAM_TOKEN = "7670865041:AAFuZra_jwBXfACjc3ZBwee_GCrGrhYCCrc";
-    const CHAT_ID = "<SEU_CHAT_ID>";
+    const CHAT_ID = "<Sucatas_bot";
     const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
     try {
