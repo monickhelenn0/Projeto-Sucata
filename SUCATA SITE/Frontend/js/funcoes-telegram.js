@@ -22,3 +22,8 @@ const enviarTelegram = async (mensagem) => {
         alert("Erro ao enviar mensagem ao Telegram. Verifique sua conexão ou configurações.");
     }
 };
+
+function testeEnvioTelegram() {
+    const mensagem = "🚀 Teste de envio para o grupo GALPÃO!";
+    enviarTelegram(mensagem);
+}
