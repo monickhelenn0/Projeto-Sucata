@@ -13,6 +13,19 @@ function adicionarSaida() {
         return;
     }
 
+    const confirmacao = confirm(
+        `Registrar a seguinte saída?\n\n` +
+        `👤 Funcionário: ${funcionario}\n` +
+        `💵 Valor: R$ ${valor.toFixed(2)}\n` +
+        `📄 Motivo: ${motivo}\n` +
+        `💳 Forma de Pagamento: ${formaPagamento === "pix" ? "PIX" : "Dinheiro"}`
+    );
+
+    if (!confirmacao) {
+        alert("Registro cancelado.");
+        return;
+    }
+
     const saida = {
         data: new Date().toLocaleDateString(),
         funcionario,
@@ -29,12 +42,10 @@ function adicionarSaida() {
     atualizarListaSaidas();
     atualizarSaidasHome();
 
-    // Exibir modal de confirmação
-    const modal = new bootstrap.Modal(document.getElementById("saidaConfirmadaModal"));
-    modal.show();
+    alert("Saída registrada com sucesso!");
 
     // Enviar notificação ao Telegram
-    const mensagem = `📤 *Nova Saída Registrada*:\n👤 Funcionário: ${saida.funcionario}\n💵 Valor: R$ ${saida.valor.toFixed(2)}\n📄 Motivo: ${saida.motivo}\n💳 Forma de Pagamento: ${formaPagamento === "pix" ? "PIX" : "Dinheiro"}\n📅 Data: ${saida.data}`;
+    const mensagem = `📤 *Nova Saída Registrada*:\n👤 Funcionário: ${funcionario}\n💵 Valor: R$ ${valor.toFixed(2)}\n📄 Motivo: ${motivo}\n💳 Forma de Pagamento: ${formaPagamento === "pix" ? "PIX" : "Dinheiro"}\n📅 Data: ${saida.data}`;
     enviarTelegram(mensagem);
 
     // Limpar o formulário
@@ -68,7 +79,7 @@ function atualizarListaSaidas() {
     });
 }
 
-// Função para atualizar totais na página Home
+// Função para atualizar os totais na página Home
 function atualizarSaidasHome() {
     const totalDinheiro = historicoSaidas
         .filter((saida) => saida.formaPagamento === "dinheiro")
@@ -86,29 +97,13 @@ function atualizarSaidasHome() {
     localStorage.setItem("totalSaidas", totalSaidas);
 
     // Atualizar na interface (página Home)
-    document.getElementById("total-saidas-dia").innerText = totalSaidas.toFixed(2);
-    document.getElementById("total-saidas-dinheiro").innerText = totalDinheiro.toFixed(2);
-    document.getElementById("total-saidas-pix").innerText = totalPix.toFixed(2);
-}
+    const totalSaidasDiaEl = document.getElementById("total-saidas-dia");
+    const totalDinheiroEl = document.getElementById("total-saidas-dinheiro");
+    const totalPixEl = document.getElementById("total-saidas-pix");
 
-// Função para excluir uma saída
-function excluirSaida(index) {
-    const motivo = prompt("Informe o motivo para a exclusão:");
-    if (!motivo || motivo.trim() === "") {
-        alert("Exclusão cancelada. O motivo é obrigatório.");
-        return;
-    }
-
-    const saidaRemovida = historicoSaidas.splice(index, 1)[0];
-    exclusoes.push({ ...saidaRemovida, motivo, tipo: "Saída" });
-
-    localStorage.setItem("historicoSaidas", JSON.stringify(historicoSaidas));
-    localStorage.setItem("exclusoes", JSON.stringify(exclusoes));
-
-    atualizarListaSaidas();
-    atualizarSaidasHome();
-
-    alert("Saída excluída com sucesso.");
+    if (totalSaidasDiaEl) totalSaidasDiaEl.innerText = totalSaidas.toFixed(2);
+    if (totalDinheiroEl) totalDinheiroEl.innerText = totalDinheiro.toFixed(2);
+    if (totalPixEl) totalPixEl.innerText = totalPix.toFixed(2);
 }
 
 // Enviar mensagens ao Telegram
@@ -124,9 +119,16 @@ const enviarTelegram = async (mensagem) => {
             body: JSON.stringify({ chat_id: CHAT_ID, text: mensagem, parse_mode: "Markdown" }),
         });
 
-        if (!response.ok) throw new Error("Erro ao enviar mensagem para o Telegram.");
+        if (!response.ok) {
+            const error = await response.json();
+            console.error("Erro ao enviar mensagem ao Telegram:", error.description);
+            alert(`Erro ao enviar mensagem ao Telegram: ${error.description}`);
+        } else {
+            console.log("Mensagem enviada ao Telegram com sucesso!");
+        }
     } catch (error) {
         console.error("Erro ao enviar mensagem ao Telegram:", error);
+        alert("Erro ao enviar mensagem ao Telegram. Verifique sua conexão ou configurações.");
     }
 };
 
