@@ -55,6 +55,27 @@ function adicionarSaida() {
     document.getElementById("forma-pagamento").value = "pix";
 }
 
+// Função para excluir uma saída
+function excluirSaida(index) {
+    const confirmacao = confirm("Tem certeza de que deseja excluir esta saída?");
+    if (!confirmacao) {
+        alert("Ação cancelada.");
+        return;
+    }
+
+    const saidaRemovida = historicoSaidas.splice(index, 1)[0]; // Remove do histórico
+    localStorage.setItem("historicoSaidas", JSON.stringify(historicoSaidas)); // Atualiza o LocalStorage
+
+    // Registrar no log de exclusões
+    exclusoes.push({ ...saidaRemovida, tipo: "Saída", motivo: "Exclusão manual" });
+    localStorage.setItem("exclusoes", JSON.stringify(exclusoes));
+
+    atualizarListaSaidas();
+    atualizarSaidasHome();
+
+    alert("Saída excluída com sucesso!");
+}
+
 // Função para atualizar a lista de saídas
 function atualizarListaSaidas() {
     const tabelaSaidas = document.getElementById("lista-saidas");

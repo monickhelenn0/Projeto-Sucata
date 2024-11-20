@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque</title>
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css/estilo-estoque.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Luciene Sucatas</div>
+            </a>
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="compras.html">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Compras</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="saidas.html">
+                    <i class="fas fa-fw fa-minus-circle"></i>
+                    <span>Saídas</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="estoque.html">
+                    <i class="fas fa-fw fa-box"></i>
+                    <span>Estoque</span>
+                </a>
+            </li>
+        </ul>
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"></nav>
+                <div class="container-fluid">
+                    <h1 class="h3 mb-4 text-gray-800">Histórico do Estoque</h1>
+
+                    <!-- Filtro por Período -->
+                    <div class="mb-4">
+                        <label for="data-inicio">Data de Início:</label>
+                        <input type="date" id="data-inicio" class="form-control mb-2" style="width: 200px; display: inline-block;">
+                        <label for="data-fim">Data de Fim:</label>
+                        <input type="date" id="data-fim" class="form-control mb-2" style="width: 200px; display: inline-block;">
+                        <button class="btn btn-primary" onclick="filtrarHistorico()">Filtrar</button>
+                    </div>
+
+                    <!-- Tabela do Estoque -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Histórico de Materiais</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Total em Kg</th>
+                                        <th>Data da Última Compra</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-estoque">
+                                    <!-- Dados serão carregados aqui -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/funcoes-estoque.js"></script>
+</body>
+</html>
