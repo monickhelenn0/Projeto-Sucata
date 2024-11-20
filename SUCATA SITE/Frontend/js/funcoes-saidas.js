@@ -9,7 +9,7 @@ function adicionarSaida() {
     const formaPagamento = document.getElementById("forma-pagamento").value;
 
     if (!funcionario || valor <= 0 || !motivo || !formaPagamento) {
-        exibirNotificacao("Erro", "Preencha todos os campos corretamente.", "danger");
+        alert("Preencha todos os campos corretamente.");
         return;
     }
 
@@ -21,67 +21,30 @@ function adicionarSaida() {
         formaPagamento,
     };
 
-    // Adicionar a saída ao histórico
+    // Adicionar ao histórico de saídas
     historicoSaidas.push(saida);
     localStorage.setItem("historicoSaidas", JSON.stringify(historicoSaidas));
 
-    // Atualizar totais
-    if (formaPagamento === "dinheiro") {
-        const totalDinheiro = parseFloat(localStorage.getItem("totalSaidasDinheiro")) || 0;
-        localStorage.setItem("totalSaidasDinheiro", totalDinheiro + valor);
-    } else if (formaPagamento === "pix") {
-        const totalPix = parseFloat(localStorage.getItem("totalSaidasPix")) || 0;
-        localStorage.setItem("totalSaidasPix", totalPix + valor);
-    }
-    atualizarSaidasHome();
-
-    // Atualizar a lista de saídas
-    atualizarListaSaidas();
-
-    // Notificar sucesso
-    exibirNotificacao("Sucesso", "Saída registrada com sucesso!", "success");
-
-    // Enviar notificação ao Telegram
-    const mensagem = `📤 *Nova Saída Registrada*:\n\n👤 Funcionário: ${saida.funcionario}\n💵 Valor: R$ ${saida.valor.toFixed(2)}\n📄 Motivo: ${saida.motivo}\n💳 Forma de Pagamento: ${formaPagamento === "pix" ? "PIX" : "Dinheiro"}\n📅 Data: ${saida.data}`;
-    enviarTelegram(mensagem);
-}
-
-// Função para excluir uma saída
-function excluirSaida(index) {
-    const motivo = prompt("Informe o motivo para a exclusão:");
-    if (!motivo || motivo.trim() === "") {
-        exibirNotificacao("Erro", "A exclusão foi cancelada. O motivo é obrigatório.", "danger");
-        return;
-    }
-
-    const saidaRemovida = historicoSaidas.splice(index, 1)[0];
-    exclusoes.push({ ...saidaRemovida, motivo, tipo: "Saída" });
-
-    // Recalcular totais
-    if (saidaRemovida.formaPagamento === "dinheiro") {
-        const totalDinheiro = parseFloat(localStorage.getItem("totalSaidasDinheiro")) || 0;
-        localStorage.setItem("totalSaidasDinheiro", totalDinheiro - saidaRemovida.valor);
-    } else if (saidaRemovida.formaPagamento === "pix") {
-        const totalPix = parseFloat(localStorage.getItem("totalSaidasPix")) || 0;
-        localStorage.setItem("totalSaidasPix", totalPix - saidaRemovida.valor);
-    }
-
-    localStorage.setItem("historicoSaidas", JSON.stringify(historicoSaidas));
-    localStorage.setItem("exclusoes", JSON.stringify(exclusoes));
-
-    // Atualizar lista de saídas
+    // Atualizar lista e totais
     atualizarListaSaidas();
     atualizarSaidasHome();
 
-    // Notificar sucesso
-    exibirNotificacao("Sucesso", "Saída excluída com sucesso!", "success");
+    // Exibir modal de confirmação
+    const modal = new bootstrap.Modal(document.getElementById("saidaConfirmadaModal"));
+    modal.show();
 
     // Enviar notificação ao Telegram
-    const mensagem = `❌ *Saída Excluída*:\n\n👤 Funcionário: ${saidaRemovida.funcionario}\n💵 Valor: R$ ${saidaRemovida.valor.toFixed(2)}\n📄 Motivo da Exclusão: ${motivo}`;
+    const mensagem = `📤 *Nova Saída Registrada*:\n👤 Funcionário: ${saida.funcionario}\n💵 Valor: R$ ${saida.valor.toFixed(2)}\n📄 Motivo: ${saida.motivo}\n💳 Forma de Pagamento: ${formaPagamento === "pix" ? "PIX" : "Dinheiro"}\n📅 Data: ${saida.data}`;
     enviarTelegram(mensagem);
+
+    // Limpar o formulário
+    document.getElementById("funcionario").value = "";
+    document.getElementById("valor").value = "";
+    document.getElementById("motivo").value = "";
+    document.getElementById("forma-pagamento").value = "pix";
 }
 
-// Atualizar a lista de saídas
+// Função para atualizar a lista de saídas
 function atualizarListaSaidas() {
     const tabelaSaidas = document.getElementById("lista-saidas");
     if (!tabelaSaidas) return;
@@ -89,47 +52,63 @@ function atualizarListaSaidas() {
     tabelaSaidas.innerHTML = "";
 
     historicoSaidas.forEach((saida, index) => {
-        tabelaSaidas.innerHTML += `
+        const row = `
             <tr>
                 <td>${saida.data}</td>
                 <td>${saida.funcionario}</td>
                 <td>R$ ${saida.valor.toFixed(2)}</td>
                 <td>${saida.formaPagamento === "pix" ? "PIX" : "Dinheiro"}</td>
                 <td>${saida.motivo}</td>
-                <td><button class="btn btn-danger btn-sm" onclick="excluirSaida(${index})">Excluir</button></td>
+                <td>
+                    <button class="btn btn-danger btn-sm" onclick="excluirSaida(${index})">Excluir</button>
+                </td>
             </tr>
         `;
+        tabelaSaidas.innerHTML += row;
     });
 }
 
-// Atualizar totais na Home
+// Função para atualizar totais na página Home
 function atualizarSaidasHome() {
-    const totalDinheiro = parseFloat(localStorage.getItem("totalSaidasDinheiro")) || 0;
-    const totalPix = parseFloat(localStorage.getItem("totalSaidasPix")) || 0;
+    const totalDinheiro = historicoSaidas
+        .filter((saida) => saida.formaPagamento === "dinheiro")
+        .reduce((acc, saida) => acc + saida.valor, 0);
+
+    const totalPix = historicoSaidas
+        .filter((saida) => saida.formaPagamento === "pix")
+        .reduce((acc, saida) => acc + saida.valor, 0);
 
     const totalSaidas = totalDinheiro + totalPix;
+
+    // Atualizar no localStorage
+    localStorage.setItem("totalSaidasDinheiro", totalDinheiro);
+    localStorage.setItem("totalSaidasPix", totalPix);
     localStorage.setItem("totalSaidas", totalSaidas);
 
-    // Atualizar os totais na interface
+    // Atualizar na interface (página Home)
     document.getElementById("total-saidas-dia").innerText = totalSaidas.toFixed(2);
     document.getElementById("total-saidas-dinheiro").innerText = totalDinheiro.toFixed(2);
     document.getElementById("total-saidas-pix").innerText = totalPix.toFixed(2);
 }
 
-// Função para exibir notificações
-function exibirNotificacao(titulo, mensagem, tipo) {
-    const notificacao = document.createElement("div");
-    notificacao.className = `alert alert-${tipo} alert-dismissible fade show`;
-    notificacao.role = "alert";
-    notificacao.innerHTML = `
-        <strong>${titulo}</strong> ${mensagem}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `;
-    document.body.appendChild(notificacao);
+// Função para excluir uma saída
+function excluirSaida(index) {
+    const motivo = prompt("Informe o motivo para a exclusão:");
+    if (!motivo || motivo.trim() === "") {
+        alert("Exclusão cancelada. O motivo é obrigatório.");
+        return;
+    }
 
-    setTimeout(() => {
-        notificacao.remove();
-    }, 5000);
+    const saidaRemovida = historicoSaidas.splice(index, 1)[0];
+    exclusoes.push({ ...saidaRemovida, motivo, tipo: "Saída" });
+
+    localStorage.setItem("historicoSaidas", JSON.stringify(historicoSaidas));
+    localStorage.setItem("exclusoes", JSON.stringify(exclusoes));
+
+    atualizarListaSaidas();
+    atualizarSaidasHome();
+
+    alert("Saída excluída com sucesso.");
 }
 
 // Enviar mensagens ao Telegram
@@ -146,14 +125,12 @@ const enviarTelegram = async (mensagem) => {
         });
 
         if (!response.ok) throw new Error("Erro ao enviar mensagem para o Telegram.");
-        console.log("Mensagem enviada ao Telegram com sucesso!");
     } catch (error) {
         console.error("Erro ao enviar mensagem ao Telegram:", error);
-        exibirNotificacao("Erro", "Falha ao enviar mensagem ao Telegram.", "danger");
     }
 };
 
-// Inicializar a lista de saídas e totais ao carregar a página
+// Inicializar ao carregar a página
 window.onload = () => {
     atualizarListaSaidas();
     atualizarSaidasHome();
