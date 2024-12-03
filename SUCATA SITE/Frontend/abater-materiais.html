@@ -52,69 +52,73 @@
                 <div class="container-fluid">
                     <h1 class="h3 mb-4 text-gray-800">Abater Materiais</h1>
 
-                    <!-- Formulário para Adicionar à Lista -->
-                    <form class="mb-4">
-                        <div class="form-group">
-                            <label for="material">Material</label>
-                            <select class="form-control" id="material">
-                                <option value="bloco">Bloco</option>
-                                <option value="cadeira_branca">Cadeira Branca</option>
-                                <option value="catemba">Catemba</option>
-                                <option value="chaparia">Chaparia</option>
-                                <option value="chumbo">Chumbo</option>
-                                <option value="cobre_descascado">Cobre Descascado</option>
-                                <option value="ferro_lataria">Ferro Lataria</option>
-                                <option value="ferro_pesado">Ferro Pesado</option>
-                                <option value="inox">Inox</option>
-                                <option value="latinhas">Latinhas</option>
-                                <option value="metal">Metal</option>
-                                <option value="panela">Panela</option>
-                                <option value="perfil">Perfil</option>
-                                <option value="plastico_misto">Plástico Misto</option>
-                                <option value="pvc">PVC</option>
-                                <option value="roda">Roda</option>
-                                <option value="motor_pequeno">Motor Pequeno</option>
-                                <option value="motor_grande">Motor Grande</option>
-                            </select>
+                    <!-- Formulário e Lista de Materiais -->
+                    <div class="d-flex">
+                        <form class="mr-5">
+                            <div class="form-group">
+                                <label for="material">Material</label>
+                                <select class="form-control" id="material">
+                                    <option value="bloco">Bloco</option>
+                                    <option value="cadeira_branca">Cadeira Branca</option>
+                                    <option value="catemba">Catemba</option>
+                                    <option value="chaparia">Chaparia</option>
+                                    <option value="chumbo">Chumbo</option>
+                                    <option value="cobre_descascado">Cobre Descascado</option>
+                                    <option value="ferro_lataria">Ferro Lataria</option>
+                                    <option value="ferro_pesado">Ferro Pesado</option>
+                                    <option value="inox">Inox</option>
+                                    <option value="latinhas">Latinhas</option>
+                                    <option value="metal">Metal</option>
+                                    <option value="panela">Panela</option>
+                                    <option value="perfil">Perfil</option>
+                                    <option value="plastico_misto">Plástico Misto</option>
+                                    <option value="pvc">PVC</option>
+                                    <option value="roda">Roda</option>
+                                    <option value="motor_pequeno">Motor Pequeno</option>
+                                    <option value="motor_grande">Motor Grande</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="quantidade">Quantidade (Kg)</label>
+                                <input type="number" class="form-control" id="quantidade" placeholder="Quantidade a ser abatida">
+                            </div>
+                            <div class="form-group">
+                                <label for="galpao">Galpão de Origem</label>
+                                <select class="form-control" id="galpao">
+                                    <option value="galpao_varzea">Galpão Varzea</option>
+                                    <option value="galpao_2">Galpão Pau Amarelo</option>
+
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="adicionarMaterial()">Adicionar à Lista</button>
+                        </form>
+
+                        <!-- Lista de Materiais -->
+                        <div>
+                            <h5>Lista de Materiais a Abater</h5>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Quantidade (Kg)</th>
+                                        <th>Galpão</th>
+                                        <th>Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lista-materiais">
+                                    <!-- Itens da lista aparecerão aqui -->
+                                </tbody>
+                            </table>
+                            <h5>Total em Kg: <span id="total-kg">0.00</span> Kg</h5>
                         </div>
-                        <div class="form-group">
-                            <label for="quantidade">Quantidade (Kg)</label>
-                            <input type="number" class="form-control" id="quantidade" placeholder="Quantidade a ser abatida">
-                        </div>
-                        <div class="form-group">
-                            <label for="galpao">Galpão de Origem</label>
-                            <select class="form-control" id="galpao">
-                                <option value="galpao_1">Galpão 1</option>
-                                <option value="galpao_2">Galpão 2</option>
-                                <option value="galpao_3">Galpão 3</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="destino">Destino</label>
-                            <input type="text" class="form-control" id="destino" placeholder="Exemplo: Gerdau">
-                        </div>
-                        <button type="button" class="btn btn-primary" onclick="adicionarMaterial()">Adicionar à Lista</button>
+                    </div>
+
+                    <!-- Botões de Finalização -->
+                    <div class="mt-4">
+                        <h5>Destino da Saída</h5>
+                        <input type="text" class="form-control mb-3" id="destino" placeholder="Exemplo: Gerdau">
                         <button type="button" class="btn btn-success" onclick="finalizarRegistro()">Finalizar Registro</button>
                         <button type="button" class="btn btn-info" onclick="imprimirLista()">Imprimir Lista</button>
-                    </form>
-
-                    <!-- Lista de Materiais -->
-                    <div class="mb-4">
-                        <h5>Lista de Materiais a Abater</h5>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Material</th>
-                                    <th>Quantidade (Kg)</th>
-                                    <th>Galpão</th>
-                                    <th>Destino</th>
-                                    <th>Ação</th>
-                                </tr>
-                            </thead>
-                            <tbody id="lista-materiais">
-                                <!-- Itens da lista aparecerão aqui -->
-                            </tbody>
-                        </table>
                     </div>
 
                     <!-- Histórico -->

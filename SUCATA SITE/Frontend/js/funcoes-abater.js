@@ -1,19 +1,20 @@
 let listaMateriais = [];
 let historicoSaidas = JSON.parse(localStorage.getItem("historicoSaidas")) || [];
+let totalKg = 0;
 
 // Função para adicionar um material à lista
 function adicionarMaterial() {
     const material = document.getElementById("material").value;
     const quantidade = parseFloat(document.getElementById("quantidade").value) || 0;
     const galpao = document.getElementById("galpao").value;
-    const destino = document.getElementById("destino").value.trim();
 
-    if (!material || quantidade <= 0 || !galpao || !destino) {
+    if (!material || quantidade <= 0 || !galpao) {
         alert("Preencha todos os campos corretamente.");
         return;
     }
 
-    listaMateriais.push({ material, quantidade, galpao, destino });
+    listaMateriais.push({ material, quantidade, galpao });
+    totalKg += quantidade;
     atualizarListaMateriais();
 }
 
@@ -28,22 +29,30 @@ function atualizarListaMateriais() {
                 <td>${item.material}</td>
                 <td>${item.quantidade} Kg</td>
                 <td>${item.galpao}</td>
-                <td>${item.destino}</td>
                 <td><button class="btn btn-danger btn-sm" onclick="excluirItem(${index})">Excluir</button></td>
             </tr>
         `;
         tabela.innerHTML += row;
     });
+
+    document.getElementById("total-kg").innerText = totalKg.toFixed(2);
 }
 
 // Função para excluir um item da lista
 function excluirItem(index) {
+    totalKg -= listaMateriais[index].quantidade;
     listaMateriais.splice(index, 1);
     atualizarListaMateriais();
 }
 
 // Função para finalizar o registro
 function finalizarRegistro() {
+    const destino = document.getElementById("destino").value.trim();
+    if (!destino) {
+        alert("Informe o destino da saída.");
+        return;
+    }
+
     if (listaMateriais.length === 0) {
         alert("Adicione itens antes de finalizar o registro.");
         return;
@@ -51,15 +60,16 @@ function finalizarRegistro() {
 
     const dataAtual = new Date().toLocaleDateString();
     listaMateriais.forEach((item) => {
-        historicoSaidas.push({ ...item, data: dataAtual });
+        historicoSaidas.push({ ...item, destino, data: dataAtual });
     });
 
     localStorage.setItem("historicoSaidas", JSON.stringify(historicoSaidas));
     listaMateriais = [];
+    totalKg = 0;
     atualizarListaMateriais();
     carregarHistorico();
 
-    alert("Materiais registrados com sucesso!");
+    alert("Registro finalizado com sucesso!");
 }
 
 // Função para carregar o histórico
@@ -96,7 +106,6 @@ function imprimirLista() {
                     <th>Material</th>
                     <th>Quantidade (Kg)</th>
                     <th>Galpão</th>
-                    <th>Destino</th>
                 </tr>
             </thead>
             <tbody>
@@ -107,7 +116,6 @@ function imprimirLista() {
                             <td>${item.material}</td>
                             <td>${item.quantidade} Kg</td>
                             <td>${item.galpao}</td>
-                            <td>${item.destino}</td>
                         </tr>
                     `
                     )
