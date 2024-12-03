@@ -82,9 +82,9 @@ function finalizarCompra() {
 
     historicoCompras.push(compra);
     localStorage.setItem("historicoCompras", JSON.stringify(historicoCompras));
-    if (formaPagamento === "dinheiro") {
-        const totalCompradoDinheiro = parseFloat(localStorage.getItem("totalCompradoDinheiro")) || 0;
-        localStorage.setItem("totalCompradoDinheiro", totalCompradoDinheiro + totalCompras);
+    if (formaPagamento === "especie") {
+        const totalCompradoEspecie = parseFloat(localStorage.getItem("totalCompradoEspecie")) || 0;
+        localStorage.setItem("totalCompradoEspecie", totalCompradoEspecie + totalCompras);
     } else if (formaPagamento === "pix") {
         const totalCompradoPix = parseFloat(localStorage.getItem("totalCompradoPix")) || 0;
         localStorage.setItem("totalCompradoPix", totalCompradoPix + totalCompras);
@@ -97,9 +97,9 @@ function finalizarCompra() {
     carregarHistorico();
 
     //Enviar as informações para home
-    if (formaPagamento === "dinheiro") {
-        const totalCompradoDinheiro = parseFloat(localStorage.getItem("totalCompradoDinheiro")) || 0;
-        localStorage.setItem("totalCompradoDinheiro", totalCompradoDinheiro + totalCompras);
+    if (formaPagamento === "especie") {
+        const totalCompradoEspecie = parseFloat(localStorage.getItem("totalCompradoEspecie")) || 0;
+        localStorage.setItem("totalCompradoEspecie", totalCompradoEspecie + totalCompras);
     } else if (formaPagamento === "pix") {
         const totalCompradoPix = parseFloat(localStorage.getItem("totalCompradoPix")) || 0;
         localStorage.setItem("totalCompradoPix", totalCompradoPix + totalCompras);
@@ -117,7 +117,7 @@ function carregarHistorico() {
         row.innerHTML = `
             <td>${compra.data} ${compra.hora}</td>
             <td>R$ ${compra.total.toFixed(2)}</td>
-            <td>${compra.formaPagamento === "pix" ? "PIX" : "Dinheiro"}</td>
+            <td>${compra.formaPagamento === "pix" ? "PIX" : "Espécie"}</td>
             <td>
                 <button onclick="verDetalhesCompra(${index})" class="btn btn-info btn-sm">Ver Detalhes</button>
                 <button onclick="confirmarExclusaoHistorico(${index})" class="btn btn-danger btn-sm">Excluir</button>
@@ -133,7 +133,7 @@ function verDetalhesCompra(index) {
     const detalhesHtml = `
         <p><strong>Data:</strong> ${compra.data}</p>
         <p><strong>Total:</strong> R$ ${compra.total.toFixed(2)}</p>
-        <p><strong>Forma de Pagamento:</strong> ${compra.formaPagamento === "pix" ? "PIX" : "Dinheiro"}</p>
+        <p><strong>Forma de Pagamento:</strong> ${compra.formaPagamento === "pix" ? "PIX" : "Especie"}</p>
         <h5>Itens:</h5>
         <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>
@@ -191,9 +191,9 @@ function excluirHistorico(index, motivo) {
     localStorage.setItem("historicoCompras", JSON.stringify(historicoCompras));
 
     // Atualizar os totais de compras no localStorage
-    if (compraRemovida.formaPagamento === "dinheiro") {
-        const totalCompradoDinheiro = parseFloat(localStorage.getItem("totalCompradoDinheiro")) || 0;
-        localStorage.setItem("totalCompradoDinheiro", totalCompradoDinheiro - compraRemovida.total);
+    if (compraRemovida.formaPagamento === "especie") {
+        const totalCompradoEspecie = parseFloat(localStorage.getItem("totalCompradoEspecie")) || 0;
+        localStorage.setItem("totalCompradoEspecie", totalCompradoEspecie - compraRemovida.total);
     } else if (compraRemovida.formaPagamento === "pix") {
         const totalCompradoPix = parseFloat(localStorage.getItem("totalCompradoPix")) || 0;
         localStorage.setItem("totalCompradoPix", totalCompradoPix - compraRemovida.total);
@@ -214,7 +214,7 @@ function filtrarHistoricoPorData() {
             row.innerHTML = `
                 <td>${compra.data}</td>
                 <td>R$ ${compra.total.toFixed(2)}</td>
-                <td>${compra.formaPagamento === "pix" ? "PIX" : "Dinheiro"}</td>
+                <td>${compra.formaPagamento === "pix" ? "PIX" : "Especie"}</td>
                 <td>
                     <button onclick="verDetalhesCompra(${index})" class="btn btn-info btn-sm">Ver Detalhes</button>
                     <button onclick="confirmarExclusaoHistorico(${index})" class="btn btn-danger btn-sm">Excluir</button>
