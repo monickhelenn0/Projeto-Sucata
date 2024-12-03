@@ -47,7 +47,32 @@
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"></nav>
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="nomeUsuario">Usuário</span>
+                                <i class="fas fa-user-circle fa-lg"></i>
+                            </a>
+                            <!-- Dropdown do Usuário -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <div class="dropdown-item">
+                                    <strong>Usuário:</strong> <span id="usuarioInfo"></span>
+                                </div>
+                                <div class="dropdown-item">
+                                    <strong>Login:</strong> <span id="loginInfo"></span>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Sair
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- Conteúdo -->
                 <div class="container-fluid">
                     <h1 class="h3 mb-4 text-gray-800">Saídas de Valores</h1>
                     
@@ -69,7 +94,7 @@
                             <label for="forma-pagamento">Forma de Pagamento</label>
                             <select class="form-control" id="forma-pagamento">
                                 <option value="pix">PIX</option>
-                                <option value="especie">Espécie</option>
+                                <option value="dinheiro">Espécie</option>
                             </select>
                         </div>
                         <button type="button" class="btn btn-primary" onclick="adicionarSaida()">Registrar Saída</button>
@@ -82,6 +107,7 @@
                             <thead>
                                 <tr>
                                     <th>Data</th>
+                                    <th>Galpão</th>
                                     <th>Funcionário</th>
                                     <th>Valor (R$)</th>
                                     <th>Forma de Pagamento</th>
@@ -99,37 +125,26 @@
         </div>
     </div>
     
-    <!-- Modal de Confirmação -->
-    <div class="modal fade" id="saidaConfirmadaModal" tabindex="-1" aria-labelledby="saidaConfirmadaLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="saidaConfirmadaLabel">Saída Registrada</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    A saída foi registrada com sucesso!
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>    
     <!-- Scripts -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/funcoes-saidas.js"></script>
-        <!-- verifica login -->
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                verificarLogin();
-        
-                const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-                document.getElementById("usuario-logado").innerText = usuarioLogado.usuario;
-                document.getElementById("usuario-logado-detalhes").innerText = usuarioLogado.usuario;
-                document.getElementById("horario-login").innerText = `Login em: ${usuarioLogado.horarioLogin}`;
-            });
-        </script>    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+            if (!usuarioLogado) {
+                window.location.href = "login.html";
+            } else {
+                document.getElementById("nomeUsuario").innerText = usuarioLogado.usuario;
+                document.getElementById("usuarioInfo").innerText = usuarioLogado.usuario;
+                document.getElementById("loginInfo").innerText = new Date(usuarioLogado.horarioLogin).toLocaleString();
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem("usuarioLogado");
+            window.location.href = "login.html";
+        }
+    </script>
 </body>
 </html>
