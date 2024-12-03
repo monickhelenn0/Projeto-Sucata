@@ -102,7 +102,7 @@ function atualizarListaSaidas() {
 // Função para atualizar os totais na página Home
 function atualizarTotaisSaidas() {
     const totalEspécie = historicoSaidas
-        .filter((saida) => saida.formaPagamento === "dinheiro")
+        .filter((saida) => saida.formaPagamento === "especie")
         .reduce((acc, saida) => acc + saida.valor, 0);
 
     const totalPix = historicoSaidas
