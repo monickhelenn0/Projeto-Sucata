@@ -120,5 +120,16 @@
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/funcoes-saidas.js"></script>
+        <!-- verifica login -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                verificarLogin();
+        
+                const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+                document.getElementById("usuario-logado").innerText = usuarioLogado.usuario;
+                document.getElementById("usuario-logado-detalhes").innerText = usuarioLogado.usuario;
+                document.getElementById("horario-login").innerText = `Login em: ${usuarioLogado.horarioLogin}`;
+            });
+        </script>    
 </body>
 </html>

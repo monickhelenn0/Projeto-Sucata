@@ -237,6 +237,17 @@
     
         // Inicializar a listagem de compras ao carregar a página
         document.addEventListener("DOMContentLoaded", listarCompras);
+    </script>
+    <!-- verifica login -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            verificarLogin();
+    
+            const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+            document.getElementById("usuario-logado").innerText = usuarioLogado.usuario;
+            document.getElementById("usuario-logado-detalhes").innerText = usuarioLogado.usuario;
+            document.getElementById("horario-login").innerText = `Login em: ${usuarioLogado.horarioLogin}`;
+        });
     </script>    
 </body>
 </html>
