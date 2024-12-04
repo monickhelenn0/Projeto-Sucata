@@ -19,63 +19,52 @@
                 <div class="sidebar-brand-text mx-3">Luciene Sucatas</div>
             </a>
             <hr class="sidebar-divider my-0">
-            <li class="nav-item">
-                <a class="nav-link" href="index.html">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Home</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="compras.html">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Compras</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="saidas.html">
-                    <i class="fas fa-fw fa-minus-circle"></i>
-                    <span>Saídas</span>
-                </a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="estoque.html">
-                    <i class="fas fa-fw fa-box"></i>
-                    <span>Estoque</span>
-                </a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-fw fa-tachometer-alt"></i><span>Home</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-fw fa-cog"></i><span>Compras</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="saidas.html"><i class="fas fa-fw fa-minus-circle"></i><span>Saídas</span></a></li>
+            <li class="nav-item active"><a class="nav-link" href="estoque.html"><i class="fas fa-fw fa-box"></i><span>Estoque</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="exclusoes.html"><i class="fas fa-fw fa-trash"></i><span>Itens Excluídos</span></a></li>
         </ul>
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"></nav>
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                                <i class="fas fa-user-circle fa-lg"></i>
+                                <span id="username" class="ml-2 d-none d-lg-inline text-gray-600 small"></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <span class="dropdown-item-text text-gray-700 small" id="login-time"></span>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Sair
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+
                 <div class="container-fluid">
-                    <h1 class="h3 mb-4 text-gray-800">Histórico do Estoque</h1>
+                    <h1 class="h3 mb-4 text-gray-800">Estoque de Materiais</h1>
 
-                    <!-- Filtro por Período -->
-                    <div class="mb-4">
-                        <label for="data-inicio">Data de Início:</label>
-                        <input type="date" id="data-inicio" class="form-control mb-2" style="width: 200px; display: inline-block;">
-                        <label for="data-fim">Data de Fim:</label>
-                        <input type="date" id="data-fim" class="form-control mb-2" style="width: 200px; display: inline-block;">
-                        <button class="btn btn-primary" onclick="filtrarHistorico()">Filtrar</button>
-                    </div>
-
-                    <!-- Tabela do Estoque -->
+                    <!-- Tabela de Estoque -->
                     <div class="card">
                         <div class="card-header">
-                            <h5>Histórico de Materiais</h5>
+                            <h5 class="d-inline">Histórico do Estoque</h5>
                         </div>
                         <div class="card-body">
                             <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th>Material</th>
-                                        <th>Total em Kg</th>
-                                        <th>Data da Última Compra</th>
+                                        <th>Total em KG</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabela-estoque">
-                                    <!-- Dados serão carregados aqui -->
+                                    <!-- Dados serão preenchidos dinamicamente -->
                                 </tbody>
                             </table>
                         </div>
@@ -89,5 +78,6 @@
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/funcoes-estoque.js"></script>
+    <script src="js/funcoes-usuario.js"></script>
 </body>
 </html>

@@ -1,94 +1,46 @@
-// Função para carregar o histórico do estoque
+// Função para carregar os dados do estoque
 function carregarEstoque() {
-    const compras = JSON.parse(localStorage.getItem("historicoCompras")) || [];
+    const historicoCompras = JSON.parse(localStorage.getItem("historicoCompras")) || [];
     const tabelaEstoque = document.getElementById("tabela-estoque");
 
-    // Agrupar por material e calcular total
-    const agrupados = compras.reduce((acc, compra) => {
+    // Agrupar os materiais por tipo e calcular os totais
+    const materiais = {};
+    historicoCompras.forEach((compra) => {
         compra.itens.forEach((item) => {
-            if (!acc[item.material]) {
-                acc[item.material] = { total: 0, ultimaData: compra.data };
-            }
-            acc[item.material].total += item.peso;
-            acc[item.material].ultimaData = compra.data;
+            materiais[item.material] = (materiais[item.material] || 0) + item.peso;
         });
-        return acc;
-    }, {});
+    });
 
-    // Transformar em array para ordenar
-    const materiais = Object.entries(agrupados).map(([material, dados]) => ({
-        material,
-        total: dados.total,
-        ultimaData: dados.ultimaData,
-    }));
+    // Transformar o objeto em array, ordenar e preencher a tabela
+    const materiaisOrdenados = Object.entries(materiais)
+        .map(([material, peso]) => ({ material, peso }))
+        .sort((a, b) => b.peso - a.peso);
 
-    // Ordenar por quantidade total (decrescente)
-    materiais.sort((a, b) => b.total - a.total);
-
-    // Preencher a tabela
-    tabelaEstoque.innerHTML = materiais
-        .map(
-            (item) => `
-        <tr>
-            <td>${item.material}</td>
-            <td>${item.total.toFixed(2)} kg</td>
-            <td>${item.ultimaData}</td>
-        </tr>
-    `
-        )
+    tabelaEstoque.innerHTML = materiaisOrdenados
+        .map((item) => `
+            <tr>
+                <td>${item.material}</td>
+                <td>${item.peso.toFixed(2)} kg</td>
+            </tr>
+        `)
         .join("");
 }
 
-// Função para filtrar o histórico por período
-function filtrarHistorico() {
-    const dataInicio = new Date(document.getElementById("data-inicio").value);
-    const dataFim = new Date(document.getElementById("data-fim").value);
-    const compras = JSON.parse(localStorage.getItem("historicoCompras")) || [];
-    const tabelaEstoque = document.getElementById("tabela-estoque");
+// Função para carregar o usuário logado no painel
+function carregarUsuarioLogado() {
+    const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")) || {};
+    document.getElementById("username").innerText = usuarioLogado.nome || "Usuário";
+    document.getElementById("login-time").innerText = `Logado desde: ${usuarioLogado.horario || "N/A"}`;
+}
 
-    if (isNaN(dataInicio) || isNaN(dataFim)) {
-        alert("Selecione um período válido.");
-        return;
-    }
-
-    // Filtrar compras no período
-    const comprasFiltradas = compras.filter((compra) => {
-        const dataCompra = new Date(compra.data.split("/").reverse().join("-")); // Converter formato dd/mm/aaaa para yyyy-mm-dd
-        return dataCompra >= dataInicio && dataCompra <= dataFim;
-    });
-
-    // Agrupar e exibir como antes
-    const agrupados = comprasFiltradas.reduce((acc, compra) => {
-        compra.itens.forEach((item) => {
-            if (!acc[item.material]) {
-                acc[item.material] = { total: 0, ultimaData: compra.data };
-            }
-            acc[item.material].total += item.peso;
-            acc[item.material].ultimaData = compra.data;
-        });
-        return acc;
-    }, {});
-
-    const materiais = Object.entries(agrupados).map(([material, dados]) => ({
-        material,
-        total: dados.total,
-        ultimaData: dados.ultimaData,
-    }));
-
-    materiais.sort((a, b) => b.total - a.total);
-
-    tabelaEstoque.innerHTML = materiais
-        .map(
-            (item) => `
-        <tr>
-            <td>${item.material}</td>
-            <td>${item.total.toFixed(2)} kg</td>
-            <td>${item.ultimaData}</td>
-        </tr>
-    `
-        )
-        .join("");
+// Função para logout
+function logout() {
+    localStorage.removeItem("usuarioLogado");
+    window.location.href = "login.html";
 }
 
 // Inicializar ao carregar a página
-document.addEventListener("DOMContentLoaded", carregarEstoque);
+document.addEventListener("DOMContentLoaded", () => {
+    carregarUsuarioLogado();
+    carregarEstoque();
+});
