@@ -92,6 +92,24 @@
                         <button class="btn btn-warning btn-sm mr-2" onclick="iniciarDia()" style="font-weight: bold;">Iniciar o Dia</button>
                         <button onclick="finalizarDia()" class="btn btn-danger btn-sm" style="font-weight: bold;">Finalizar o Dia</button>
                     </div>
+                    <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                        <ul class="navbar-nav ml-auto">
+                            <!-- Painel de Usuário -->
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-user-circle fa-lg"></i>
+                                    <span id="username" class="ml-2 d-none d-lg-inline text-gray-600 small"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                    <span class="dropdown-item-text text-gray-700 small" id="login-time"></span>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#" onclick="sair()">
+                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Sair
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>              
                 </nav>                              
                 <!-- Main Content -->
                 <div class="container-fluid">
