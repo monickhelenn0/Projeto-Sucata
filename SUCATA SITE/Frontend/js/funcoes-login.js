@@ -1,6 +1,6 @@
 function realizarLogin() {
-    const usuario = document.getElementById("usuario").value;
-    const senha = document.getElementById("senha").value;
+    const usuario = document.getElementById("usuario").value.trim();
+    const senha = document.getElementById("senha").value.trim();
 
     const usuarios = {
         "GP.Varzea": "varzea01",
@@ -20,8 +20,28 @@ function realizarLogin() {
 
 function verificarLogin() {
     const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-    if (!usuarioLogado) {
+    if (!usuarioLogado || !usuarioLogado.usuario) {
         window.location.href = "login.html";
+    }
+}
+
+function carregarPainelUsuario() {
+    const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+    if (!usuarioLogado) {
+        verificarLogin();
+        return;
+    }
+
+    const nomeUsuario = document.getElementById("username");
+    const horarioLogin = document.getElementById("login-time");
+
+    if (nomeUsuario) {
+        nomeUsuario.innerText = usuarioLogado.usuario || "Usuário";
+    }
+
+    if (horarioLogin) {
+        horarioLogin.innerText = `Logado desde: ${usuarioLogado.horarioLogin || "N/A"}`;
     }
 }
 
@@ -29,3 +49,9 @@ function sair() {
     localStorage.removeItem("usuarioLogado");
     window.location.href = "login.html";
 }
+
+// Adicionar verificação de login ao carregar as páginas
+document.addEventListener("DOMContentLoaded", () => {
+    verificarLogin();
+    carregarPainelUsuario();
+});

@@ -141,22 +141,17 @@
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/funcoes-saidas.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-            if (!usuarioLogado) {
-                window.location.href = "login.html";
-            } else {
-                document.getElementById("nomeUsuario").innerText = usuarioLogado.usuario;
-                document.getElementById("usuarioInfo").innerText = usuarioLogado.usuario;
-                document.getElementById("loginInfo").innerText = new Date(usuarioLogado.horarioLogin).toLocaleString();
-            }
-        });
-
-        function logout() {
-            localStorage.removeItem("usuarioLogado");
-            window.location.href = "login.html";
-        }
-    </script>
+        <!-- verifica login -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                verificarLogin();
+        
+                const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+                document.getElementById("usuario-logado").innerText = usuarioLogado.usuario;
+                document.getElementById("usuario-logado-detalhes").innerText = usuarioLogado.usuario;
+                document.getElementById("horario-login").innerText = `Login em: ${usuarioLogado.horarioLogin}`;
+            });
+        </script>  
+            <script src="js/funcoes-login.js"></script>  
 </body>
 </html>
