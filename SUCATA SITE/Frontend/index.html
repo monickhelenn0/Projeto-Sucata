@@ -61,44 +61,56 @@
             <div id="content">
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span id="username" class="mr-2 d-none d-lg-inline text-gray-600 small">Usuário</span>
-                                <i class="fas fa-user-circle fa-lg"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#" onclick="logout()">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Sair
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <h1 class="h3 mb-0 text-gray-800">Resumo do Dia</h1>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span id="username" class="mr-2 d-none d-lg-inline text-gray-600 small">Usuário</span>
+                                    <i class="fas fa-user-circle fa-lg"></i>
                                 </a>
-                            </div>
-                        </li>
-                    </ul>
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                    <span class="dropdown-item" id="user-info"></span>
+                                    <span class="dropdown-item" id="login-time"></span>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#" onclick="logout()">
+                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Sair
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </nav>
 
                 <!-- Main Content -->
                 <div class="container-fluid">
-                    <h1 class="h3 mb-4 text-gray-800">Resumo do Dia</h1>
-                    
-                    <!-- Botões de controle -->
-                    <div class="d-flex justify-content-start mb-4">
-                        <button class="btn btn-warning mr-2" onclick="iniciarDia()">Iniciar Dia</button>
-                        <button class="btn btn-danger" onclick="finalizarDia()">Finalizar Dia</button>
-                    </div>
-                    
+                    <!-- Totais -->
                     <div class="row">
-                        <!-- Caixa -->
-                        <div class="col-md-4">
+                        <!-- Total Caixa -->
+                        <div class="col-md-6">
                             <div class="card shadow h-100 py-2">
                                 <div class="card-body">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Caixa</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-caixa">R$ 0,00</div>
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total do Caixa</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-caixa-pix">PIX: R$ 0,00</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-caixa-especie">Espécie: R$ 0,00</div>
                                 </div>
                             </div>
                         </div>
+                        <!-- Total Adicionado no Dia -->
+                        <div class="col-md-6">
+                            <div class="card shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Adicionado no Dia</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-adicionado-no-dia">R$ 0,00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
                         <!-- Saídas -->
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="card shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Saídas</div>
@@ -108,7 +120,7 @@
                             </div>
                         </div>
                         <!-- Compras -->
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="card shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Compras</div>
@@ -119,17 +131,21 @@
                         </div>
                     </div>
 
+                    <!-- Botões de controle -->
+                    <div class="d-flex justify-content-start mb-4 mt-4">
+                        <button class="btn btn-warning mr-2" onclick="iniciarDia()">Iniciar Dia</button>
+                        <button class="btn btn-danger" onclick="finalizarDia()">Finalizar Dia</button>
+                    </div>
+
                     <!-- Adicionar ao Caixa -->
-                    <div class="mt-4">
-                        <h4>Adicionar ao Caixa</h4>
-                        <div class="form-inline">
-                            <input type="number" id="valor-caixa" class="form-control mr-2" placeholder="Valor">
-                            <select id="forma-pagamento" class="form-control mr-2">
-                                <option value="pix">PIX</option>
-                                <option value="especie">Espécie</option>
-                            </select>
-                            <button class="btn btn-primary" onclick="adicionarCaixa()">Adicionar</button>
-                        </div>
+                    <h4>Adicionar ao Caixa</h4>
+                    <div class="form-inline">
+                        <input type="number" id="valor-caixa" class="form-control mr-2" placeholder="Valor">
+                        <select id="forma-pagamento" class="form-control mr-2">
+                            <option value="pix">PIX</option>
+                            <option value="especie">Espécie</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="adicionarCaixa()">Adicionar</button>
                     </div>
                 </div>
             </div>
