@@ -3,6 +3,25 @@ document.addEventListener("DOMContentLoaded", () => {
     atualizarTotaisHome();
 });
 
+// Carregar o nome do usuário e a hora do login no dropdown
+function carregarUsuario() {
+    const usuarioLogado = localStorage.getItem("usuarioLogado") || "Usuário";
+    const horaLogin = localStorage.getItem("horaLogin");
+
+    // Configurar o nome do usuário no topo
+    document.getElementById("username").innerText = usuarioLogado;
+
+    // Configurar as informações no dropdown
+    document.getElementById("user-info").innerText = `Usuário: ${usuarioLogado}`;
+    if (horaLogin) {
+        document.getElementById("login-time").innerText = `Hora do login: ${horaLogin}`;
+    } else {
+        const horaAtual = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+        localStorage.setItem("horaLogin", horaAtual);
+        document.getElementById("login-time").innerText = `Hora do login: ${horaAtual}`;
+    }
+}
+
 // Atualizar todos os totais na página a partir do localStorage
 function atualizarTotaisHome() {
     const totalCaixaPix = parseFloat(localStorage.getItem("totalCaixaPix")) || 0;
@@ -14,13 +33,13 @@ function atualizarTotaisHome() {
     const totalComprasPix = parseFloat(localStorage.getItem("totalComprasPix")) || 0;
     const totalComprasEspecie = parseFloat(localStorage.getItem("totalComprasEspecie")) || 0;
 
-    // Atualizar os valores na interface, mantendo os rótulos
+    // Atualizar os valores na interface
     atualizarValorComRotulo("total-caixa-pix", "PIX: ", totalCaixaPix);
     atualizarValorComRotulo("total-caixa-especie", "Espécie: ", totalCaixaEspecie);
 
     // Atualizar o total adicionado no dia (soma de PIX + Espécie adicionados)
     const totalAdicionadoNoDia = totalAdicionadoPix + totalAdicionadoEspecie;
-    atualizarValorComRotulo("total-adicionado-no-dia", "Total Adicionado no Dia: ", totalAdicionadoNoDia);
+    atualizarValorComRotulo("total-adicionado-no-dia", "", totalAdicionadoNoDia);
 
     atualizarValorComRotulo("total-saidas-pix", "PIX: ", totalSaidasPix);
     atualizarValorComRotulo("total-saidas-especie", "Espécie: ", totalSaidasEspecie);
@@ -88,6 +107,7 @@ function iniciarDia() {
     localStorage.setItem("totalSaidasEspecie", 0);
     localStorage.setItem("totalComprasPix", 0);
     localStorage.setItem("totalComprasEspecie", 0);
+    localStorage.removeItem("horaLogin");
 
     atualizarTotaisHome();
     alert("Novo dia iniciado com sucesso!");
@@ -123,25 +143,12 @@ Resumo do Dia:
     }
 }
 
-// Enviar mensagem ao Telegram
-async function enviarTelegram(mensagem) {
-    const TELEGRAM_TOKEN = "seu-telegram-token";
-    const CHAT_ID = "seu-chat-id";
-    const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chat_id: CHAT_ID, text: mensagem, parse_mode: "Markdown" })
-        });
-
-        if (!response.ok) {
-            throw new Error("Erro ao enviar mensagem para o Telegram.");
-        }
-    } catch (error) {
-        console.error("Erro ao enviar mensagem ao Telegram:", error);
-    }
+// Sair e desconectar o usuário
+function logout() {
+    localStorage.removeItem("usuarioLogado");
+    localStorage.removeItem("horaLogin");
+    alert("Usuário desconectado com sucesso!");
+    window.location.href = "login.html";
 }
 
 // Formatar valores em moeda brasileira
