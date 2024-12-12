@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HOME - Totais do Dia</title>
-
-    <!-- Custom fonts and styles -->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="vendor/bootstrap.min.css" rel="stylesheet">
+    <link href="css/estilos-dashboard.css" rel="stylesheet">
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="css/estilo-dashboard.css" rel="stylesheet">
 </head>
 <body id="page-top">
     <div id="wrapper">
@@ -29,7 +27,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="compras.html">
-                    <i class="fas fa-fw fa-cog"></i>
+                    <i class="fas fa-fw fa-shopping-cart"></i>
                     <span>Compras</span>
                 </a>
             </li>
@@ -57,93 +55,80 @@
                     <span>Itens Excluídos</span>
                 </a>
             </li>
-        </ul>
-        <button id="installPWA" style="display: none;">Instalar o App</button>
-<script>
-    let deferredPrompt;
-    const installBtn = document.getElementById("installPWA");
-
-    window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installBtn.style.display = "block";
-    });
-
-    installBtn.addEventListener("click", () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === "accepted") {
-                    console.log("Usuário aceitou a instalação.");
-                } else {
-                    console.log("Usuário recusou a instalação.");
-                }
-                deferredPrompt = null;
-            });
-        }
-    });
-</script>
-
-        <!-- Botões Iniciar Dia e Finalizar Dia -->
+        </ul>    
+        <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
+                <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                    <div class="d-flex justify-content-end w-100 align-items-center">
-                        <button class="btn btn-warning btn-sm mr-2" onclick="iniciarDia()" style="font-weight: bold;">Iniciar o Dia</button>
-                        <button onclick="finalizarDia()" class="btn btn-danger btn-sm" style="font-weight: bold;">Finalizar o Dia</button>
-                    </div>
-                    <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                        <ul class="navbar-nav ml-auto">
-                            <!-- Painel de Usuário -->
-                            <li class="nav-item dropdown no-arrow">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fas fa-user-circle fa-lg"></i>
-                                    <span id="username" class="ml-2 d-none d-lg-inline text-gray-600 small"></span>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span id="username" class="mr-2 d-none d-lg-inline text-gray-600 small">Usuário</span>
+                                <i class="fas fa-user-circle fa-lg"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Sair
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                    <span class="dropdown-item-text text-gray-700 small" id="login-time"></span>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#" onclick="sair()">
-                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Sair
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
-                    </nav>              
-                </nav>                              
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+
                 <!-- Main Content -->
                 <div class="container-fluid">
-                    <h1 class="h3 mb-4 text-gray-800">Totais do Dia</h1>
-                    <!-- Caixa do Dia -->
-                    <div class="card mb-4">
-                        <div class="card-body text-center">
-                            <h5>Valor Total do Caixa</h5>
-                            <p>R$ <span id="total-caixa">0.00</span></p>
-                            <input type="number" id="valor-caixa" class="form-control mb-2" placeholder="Adicionar valor ao caixa">
-                            <button class="btn btn-primary" onclick="atualizarCaixa()">Registrar Caixa</button>
+                    <h1 class="h3 mb-4 text-gray-800">Resumo do Dia</h1>
+                    
+                    <!-- Botões de controle -->
+                    <div class="d-flex justify-content-start mb-4">
+                        <button class="btn btn-warning mr-2" onclick="iniciarDia()">Iniciar Dia</button>
+                        <button class="btn btn-danger" onclick="finalizarDia()">Finalizar Dia</button>
+                    </div>
+                    
+                    <div class="row">
+                        <!-- Caixa -->
+                        <div class="col-md-4">
+                            <div class="card shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Caixa</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-caixa">R$ 0,00</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Saídas -->
+                        <div class="col-md-4">
+                            <div class="card shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Saídas</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-saidas-pix">PIX: R$ 0,00</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-saidas-especie">Espécie: R$ 0,00</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Compras -->
+                        <div class="col-md-4">
+                            <div class="card shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Compras</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-comprado-pix">PIX: R$ 0,00</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-comprado-especie">Espécie: R$ 0,00</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Totais de Saídas e Compras -->
-                    <div class="row">
-                        <!-- Totais de Saídas -->
-                        <div class="col-md-6">
-                            <div class="card bg-light text-center">
-                                <h5>Saídas (Total)</h5>
-                                <p>Total: R$ <span id="total-saidas-dia">0.00</span></p>
-                                <p>Dinheiro: R$ <span id="total-saidas-dinheiro">0.00</span></p>
-                                <p>PIX: R$ <span id="total-saidas-pix">0.00</span></p>
-                            </div>
-                        </div>
-
-                        <!-- Totais de Compras -->
-                        <div class="col-md-6">
-                            <div class="card bg-light text-center">
-                                <h5>Compras (Total)</h5>
-                                <p>Total: R$ <span id="total-comprado-dia">0.00</span></p>
-                                <p>Dinheiro: R$ <span id="compras-dinheiro">0.00</span></p>
-                                <p>PIX: R$ <span id="compras-pix">0.00</span></p>
-                            </div>
+                    <!-- Adicionar ao Caixa -->
+                    <div class="mt-4">
+                        <h4>Adicionar ao Caixa</h4>
+                        <div class="form-inline">
+                            <input type="number" id="valor-caixa" class="form-control mr-2" placeholder="Valor">
+                            <select id="forma-pagamento" class="form-control mr-2">
+                                <option value="pix">PIX</option>
+                                <option value="especie">Espécie</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="adicionarCaixa()">Adicionar</button>
                         </div>
                     </div>
                 </div>
@@ -151,90 +136,8 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery.min.js"></script>
+    <script src="vendor/bootstrap.bundle.min.js"></script>
     <script src="js/funcoes-home.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-            .then(() => console.log('Service Worker registrado com sucesso!'))
-            .catch((error) => console.error('Erro ao registrar o Service Worker:', error));
-        }
-    </script>
-        <script src="js/funcoes-telegram.js"></script>
-    <script>
-        const API_URL = "https://projeto-sucata.onrender.com";
-    
-        async function listarCompras() {
-            try {
-                const response = await fetch(API_URL);
-                const compras = await response.json();
-    
-                const listaHistorico = document.getElementById("lista-historico");
-                listaHistorico.innerHTML = compras.map((compra) => `
-                    <tr>
-                        <td>${compra.data} ${compra.hora}</td>
-                        <td>R$ ${compra.total.toFixed(2)}</td>
-                        <td>${compra.formaPagamento}</td>
-                        <td>
-                            <button class="btn btn-info btn-sm" onclick="verDetalhesCompra('${compra._id}')">Ver Detalhes</button>
-                            <button class="btn btn-danger btn-sm" onclick="excluirCompra('${compra._id}')">Excluir</button>
-                        </td>
-                    </tr>
-                `).join("");
-            } catch (error) {
-                console.error("Erro ao listar compras:", error);
-            }
-        }
-    
-        async function criarCompra(dados) {
-            try {
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(dados)
-                });
-    
-                if (response.ok) {
-                    alert("Compra criada com sucesso!");
-                    listarCompras();
-                } else {
-                    throw new Error("Erro ao criar compra");
-                }
-            } catch (error) {
-                console.error("Erro ao criar compra:", error);
-            }
-        }
-    
-        async function excluirCompra(id) {
-            try {
-                const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-                if (response.ok) {
-                    alert("Compra excluída com sucesso!");
-                    listarCompras();
-                } else {
-                    throw new Error("Erro ao excluir compra");
-                }
-            } catch (error) {
-                console.error("Erro ao excluir compra:", error);
-            }
-        }
-    
-        // Inicializar a listagem de compras ao carregar a página
-        document.addEventListener("DOMContentLoaded", listarCompras);
-    </script>    
-        <!-- verifica login -->
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                verificarLogin();
-        
-                const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-                document.getElementById("usuario-logado").innerText = usuarioLogado.usuario;
-                document.getElementById("usuario-logado-detalhes").innerText = usuarioLogado.usuario;
-                document.getElementById("horario-login").innerText = `Login em: ${usuarioLogado.horarioLogin}`;
-            });
-        </script>  
-            <script src="js/funcoes-login.js"></script>    
 </body>
 </html>

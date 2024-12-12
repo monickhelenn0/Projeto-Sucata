@@ -1,30 +1,25 @@
+// Arquivo: funcoes-home.js
+
 document.addEventListener("DOMContentLoaded", () => {
     atualizarTotaisHome();
 });
 
-// Função para atualizar um elemento com valor formatado
+// Atualiza o valor exibido no elemento com base no formato de moeda local
 function atualizarValor(id, valor) {
-    document.getElementById(id).innerText = valor.toFixed(2);
-}
-
-// Função para registrar um valor no caixa
-function atualizarCaixa() {
-    const valorCaixa = parseFloat(document.getElementById("valor-caixa").value) || 0;
-    if (valorCaixa < 0) {
-        alert("O valor não pode ser negativo.");
-        return;
+    const elemento = document.getElementById(id);
+    if (elemento) {
+        elemento.innerText = new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(valor);
     }
-
-    let totalCaixa = parseFloat(localStorage.getItem("totalCaixa")) || 0;
-    totalCaixa += valorCaixa;
-
-    localStorage.setItem("totalCaixa", totalCaixa);
-    atualizarValor("total-caixa", totalCaixa);
-    document.getElementById("valor-caixa").value = "";
 }
 
-// Função para "Iniciar o Dia" e resetar os valores
+// Inicia um novo dia, resetando todos os valores
 function iniciarDia() {
+    const confirmacao = confirm("Tem certeza de que deseja iniciar um novo dia? Isso irá resetar os valores atuais.");
+    if (!confirmacao) return;
+
     // Resetar valores no localStorage
     localStorage.setItem("totalCaixa", 0);
     localStorage.setItem("totalSaidasDinheiro", 0);
@@ -32,19 +27,36 @@ function iniciarDia() {
     localStorage.setItem("totalCompradoDinheiro", 0);
     localStorage.setItem("totalCompradoPix", 0);
 
-    // Atualizar a interface na página
-    document.getElementById("total-caixa").innerText = "0.00";
-    document.getElementById("total-saidas-dia").innerText = "0.00";
-    document.getElementById("total-saidas-dinheiro").innerText = "0.00";
-    document.getElementById("total-saidas-pix").innerText = "0.00";
-    document.getElementById("total-comprado-dia").innerText = "0.00";
-    document.getElementById("compras-dinheiro").innerText = "0.00";
-    document.getElementById("compras-pix").innerText = "0.00";
-
-    alert("O dia foi iniciado e os valores foram resetados.");
+    // Atualiza os valores na interface
+    atualizarTotaisHome();
+    alert("Novo dia iniciado com sucesso.");
 }
 
-// Atualizar os totais na página Home
+// Finaliza o dia e envia um resumo ao Telegram
+function finalizarDia() {
+    const totalCaixa = parseFloat(localStorage.getItem("totalCaixa")) || 0;
+    const totalSaidasDinheiro = parseFloat(localStorage.getItem("totalSaidasDinheiro")) || 0;
+    const totalSaidasPix = parseFloat(localStorage.getItem("totalSaidasPix")) || 0;
+    const totalCompradoDinheiro = parseFloat(localStorage.getItem("totalCompradoDinheiro")) || 0;
+    const totalCompradoPix = parseFloat(localStorage.getItem("totalCompradoPix")) || 0;
+
+    // Gera um resumo formatado
+    const resumo = `
+Resumo do Dia:
+- Caixa: ${formatarMoeda(totalCaixa)}
+- Saídas (Dinheiro): ${formatarMoeda(totalSaidasDinheiro)}
+- Saídas (PIX): ${formatarMoeda(totalSaidasPix)}
+- Compras (Dinheiro): ${formatarMoeda(totalCompradoDinheiro)}
+- Compras (PIX): ${formatarMoeda(totalCompradoPix)}`;
+
+    const confirmacao = confirm(`Deseja finalizar o dia? Confira o resumo:\n${resumo}`);
+    if (confirmacao) {
+        enviarTelegram(resumo);
+        alert("Resumo enviado e dia finalizado.");
+    }
+}
+
+// Atualiza os totais na página Home com base nos valores armazenados
 function atualizarTotaisHome() {
     const totalCaixa = parseFloat(localStorage.getItem("totalCaixa")) || 0;
     const totalSaidasDinheiro = parseFloat(localStorage.getItem("totalSaidasDinheiro")) || 0;
@@ -54,49 +66,20 @@ function atualizarTotaisHome() {
 
     atualizarValor("total-caixa", totalCaixa);
     atualizarValor("total-saidas-dia", totalSaidasDinheiro + totalSaidasPix);
-    atualizarValor("total-saidas-dinheiro", totalSaidasDinheiro);
-    atualizarValor("total-saidas-pix", totalSaidasPix);
     atualizarValor("total-comprado-dia", totalCompradoDinheiro + totalCompradoPix);
-    atualizarValor("compras-dinheiro", totalCompradoDinheiro);
-    atualizarValor("compras-pix", totalCompradoPix);
-}
-
-// Função para enviar resumo diário ao Telegram
-function finalizarDia() {
-    const totalCompradoDinheiro = parseFloat(localStorage.getItem("totalCompradoDinheiro")) || 0;
-    const totalCompradoPix = parseFloat(localStorage.getItem("totalCompradoPix")) || 0;
-    const totalSaidasDinheiro = parseFloat(localStorage.getItem("totalSaidasDinheiro")) || 0;
-    const totalSaidasPix = parseFloat(localStorage.getItem("totalSaidasPix")) || 0;
-
-    const mensagem = `
-📅 *Resumo do Dia*:
-🔵 Compras - Dinheiro: R$ ${totalCompradoDinheiro.toFixed(2)}
-🟢 Compras - PIX: R$ ${totalCompradoPix.toFixed(2)}
-🔴 Saídas - Dinheiro: R$ ${totalSaidasDinheiro.toFixed(2)}
-🟣 Saídas - PIX: R$ ${totalSaidasPix.toFixed(2)}
-    `;
-
-    enviarTelegram(mensagem);
-    alert("Resumo enviado ao Telegram!");
 }
 
 // Função para enviar mensagens ao Telegram
 const enviarTelegram = async (mensagem) => {
-    const TELEGRAM_TOKEN = "7670865041:AAFuZra_jwBXfACjc3ZBwee_GCrGrhYCCrc";
-    const CHAT_ID = "-4585457524";
+    const TELEGRAM_TOKEN = "7670865041:AAFuZra_jwBXfACjc3ZBwee_GCrGrhYCCrc"; // Token pré-definido
+    const CHAT_ID = "-4585457524"; // ID do grupo
     const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
     try {
         const response = await fetch(url, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                chat_id: CHAT_ID,
-                text: mensagem,
-                parse_mode: "Markdown",
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: mensagem, parse_mode: "Markdown" })
         });
 
         if (!response.ok) {
@@ -105,4 +88,12 @@ const enviarTelegram = async (mensagem) => {
     } catch (error) {
         console.error("Erro ao enviar mensagem ao Telegram:", error);
     }
+};
+
+// Formata valores em moeda brasileira
+function formatarMoeda(valor) {
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    }).format(valor);
 }
