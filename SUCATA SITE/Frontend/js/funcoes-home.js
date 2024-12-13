@@ -1,12 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
     carregarUsuario();
+    configurarDropdown();
     atualizarTotaisHome();
 });
 
 // Carregar o nome do usuário e a hora do login no dropdown
 function carregarUsuario() {
-    const usuarioLogado = localStorage.getItem("usuarioLogado") || "Usuário";
-    const horaLogin = localStorage.getItem("horaLogin");
+    // Recuperar os dados do usuário armazenados no localStorage
+    const dadosUsuario = localStorage.getItem("usuarioLogado");
+    let usuarioLogado = "Usuário";
+    let horaLogin = null;
+
+    if (dadosUsuario) {
+        // Converter os dados do JSON string para um objeto
+        const dados = JSON.parse(dadosUsuario);
+        usuarioLogado = dados.usuario || "Usuário";
+        horaLogin = dados.horarioLogin || null;
+    }
 
     // Configurar o nome do usuário no topo
     document.getElementById("username").innerText = usuarioLogado;
@@ -16,10 +26,39 @@ function carregarUsuario() {
     if (horaLogin) {
         document.getElementById("login-time").innerText = `Hora do login: ${horaLogin}`;
     } else {
-        const horaAtual = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-        localStorage.setItem("horaLogin", horaAtual);
+        const horaAtual = new Date().toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+        });
+        localStorage.setItem(
+            "usuarioLogado",
+            JSON.stringify({ usuario: usuarioLogado, horarioLogin: horaAtual })
+        );
         document.getElementById("login-time").innerText = `Hora do login: ${horaAtual}`;
     }
+}
+
+// Configurar o comportamento do dropdown do usuário
+function configurarDropdown() {
+    const dropdown = document.getElementById("userDropdown");
+    const dropdownMenu = document.querySelector(".dropdown-menu[aria-labelledby='userDropdown']");
+
+    // Alternar a exibição do dropdown ao clicar
+    dropdown.addEventListener("click", (event) => {
+        event.preventDefault();
+        dropdownMenu.classList.toggle("show");
+    });
+
+    // Fechar o dropdown ao clicar fora
+    document.addEventListener("click", (event) => {
+        if (!dropdown.contains(event.target) && dropdownMenu.classList.contains("show")) {
+            dropdownMenu.classList.remove("show");
+        }
+    });
 }
 
 // Atualizar todos os totais na página a partir do localStorage
@@ -53,7 +92,7 @@ function atualizarValorComRotulo(id, rotulo, valor) {
     if (elemento) {
         elemento.innerText = `${rotulo}${new Intl.NumberFormat("pt-BR", {
             style: "currency",
-            currency: "BRL"
+            currency: "BRL",
         }).format(valor)}`;
     }
 }
@@ -92,61 +131,9 @@ function adicionarCaixa() {
     alert("Valor adicionado ao caixa com sucesso!");
 }
 
-// Iniciar um novo dia (zerar valores no localStorage)
-function iniciarDia() {
-    if (!confirm("Tem certeza de que deseja iniciar um novo dia? Todos os valores serão zerados.")) {
-        return;
-    }
-
-    // Resetar valores no localStorage
-    localStorage.setItem("totalCaixaPix", 0);
-    localStorage.setItem("totalCaixaEspecie", 0);
-    localStorage.setItem("totalAdicionadoPix", 0);
-    localStorage.setItem("totalAdicionadoEspecie", 0);
-    localStorage.setItem("totalSaidasPix", 0);
-    localStorage.setItem("totalSaidasEspecie", 0);
-    localStorage.setItem("totalComprasPix", 0);
-    localStorage.setItem("totalComprasEspecie", 0);
-    localStorage.removeItem("horaLogin");
-
-    atualizarTotaisHome();
-    alert("Novo dia iniciado com sucesso!");
-}
-
-// Finalizar o dia e exibir resumo
-function finalizarDia() {
-    const totalCaixaPix = parseFloat(localStorage.getItem("totalCaixaPix")) || 0;
-    const totalCaixaEspecie = parseFloat(localStorage.getItem("totalCaixaEspecie")) || 0;
-    const totalAdicionadoPix = parseFloat(localStorage.getItem("totalAdicionadoPix")) || 0;
-    const totalAdicionadoEspecie = parseFloat(localStorage.getItem("totalAdicionadoEspecie")) || 0;
-    const totalSaidasPix = parseFloat(localStorage.getItem("totalSaidasPix")) || 0;
-    const totalSaidasEspecie = parseFloat(localStorage.getItem("totalSaidasEspecie")) || 0;
-    const totalComprasPix = parseFloat(localStorage.getItem("totalComprasPix")) || 0;
-    const totalComprasEspecie = parseFloat(localStorage.getItem("totalComprasEspecie")) || 0;
-
-    const totalAdicionadoNoDia = totalAdicionadoPix + totalAdicionadoEspecie;
-
-    const resumo = `
-Resumo do Dia:
-- Total Caixa (PIX): ${formatarMoeda(totalCaixaPix)}
-- Total Caixa (Espécie): ${formatarMoeda(totalCaixaEspecie)}
-- Total Adicionado no Dia: ${formatarMoeda(totalAdicionadoNoDia)}
-- Saídas (PIX): ${formatarMoeda(totalSaidasPix)}
-- Saídas (Espécie): ${formatarMoeda(totalSaidasEspecie)}
-- Compras (PIX): ${formatarMoeda(totalComprasPix)}
-- Compras (Espécie): ${formatarMoeda(totalComprasEspecie)}
-`;
-
-    if (confirm(`Deseja finalizar o dia? Confira o resumo:\n${resumo}`)) {
-        enviarTelegram(resumo);
-        alert("Resumo enviado e dia finalizado.");
-    }
-}
-
 // Sair e desconectar o usuário
 function logout() {
     localStorage.removeItem("usuarioLogado");
-    localStorage.removeItem("horaLogin");
     alert("Usuário desconectado com sucesso!");
     window.location.href = "login.html";
 }
@@ -155,6 +142,6 @@ function logout() {
 function formatarMoeda(valor) {
     return new Intl.NumberFormat("pt-BR", {
         style: "currency",
-        currency: "BRL"
+        currency: "BRL",
     }).format(valor);
 }

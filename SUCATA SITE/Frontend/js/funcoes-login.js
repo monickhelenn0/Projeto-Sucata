@@ -1,23 +1,70 @@
-function realizarLogin() {
+document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById("loginForm");
+    loginForm.addEventListener("submit", realizarLogin);
+});
+
+/**
+ * Credenciais de login permitidas.
+ */
+const usuarios = {
+    "GP.Varzea": "varzea01",
+    "GP.Amarelo": "amarelo02",
+};
+
+/**
+ * Realiza o login verificando as credenciais.
+ * @param {Event} event - Evento de envio do formulário.
+ */
+function realizarLogin(event) {
+    event.preventDefault();
+
     const usuario = document.getElementById("usuario").value.trim();
     const senha = document.getElementById("senha").value.trim();
 
-    const usuarios = {
-        "GP.Varzea": "varzea01",
-        "GP.Amarelo": "amarelo02",
-    };
-
     if (usuarios[usuario] === senha) {
-        const horarioLogin = new Date().toLocaleString();
-        localStorage.setItem("usuarioLogado", JSON.stringify({ usuario, horarioLogin }));
-        window.location.href = "index.html"; // Redireciona para a página inicial
-        return false;
+        salvarUsuarioLogado(usuario);
+        window.location.href = "index.html"; // Redireciona para a página principal
     } else {
-        alert("Usuário ou senha incorretos!");
-        return false;
+        exibirErroLogin();
     }
 }
 
+/**
+ * Salva os dados do usuário logado no localStorage.
+ * @param {string} usuario - Nome do usuário logado.
+ */
+function salvarUsuarioLogado(usuario) {
+    const horarioLogin = new Date().toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+    });
+
+    const dadosUsuario = {
+        usuario,
+        horarioLogin,
+    };
+
+    localStorage.setItem("usuarioLogado", JSON.stringify(dadosUsuario));
+}
+
+/**
+ * Exibe uma mensagem de erro ao usuário.
+ */
+function exibirErroLogin() {
+    const erroDiv = document.getElementById("login-error");
+    erroDiv.style.display = "block";
+    setTimeout(() => {
+        erroDiv.style.display = "none";
+    }, 3000);
+}
+
+/**
+ * Verifica se o usuário está logado e redireciona caso não esteja.
+ */
 function verificarLogin() {
     const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
     if (!usuarioLogado || !usuarioLogado.usuario) {
@@ -25,6 +72,9 @@ function verificarLogin() {
     }
 }
 
+/**
+ * Carrega as informações do painel do usuário logado.
+ */
 function carregarPainelUsuario() {
     const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
@@ -45,13 +95,10 @@ function carregarPainelUsuario() {
     }
 }
 
+/**
+ * Realiza o logout do usuário.
+ */
 function sair() {
     localStorage.removeItem("usuarioLogado");
     window.location.href = "login.html";
 }
-
-// Adicionar verificação de login ao carregar as páginas
-document.addEventListener("DOMContentLoaded", () => {
-    verificarLogin();
-    carregarPainelUsuario();
-});
