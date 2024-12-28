@@ -2,5 +2,15 @@
   "dependencies": {
     "axios": "^1.7.7",
     "flask": "^0.2.10"
-  }
+  },
+  "name": "projeto-sucata",
+  "version": "1.0.0",
+  "description": "Este é o repositório do projeto **Luciene Sucatas**, um sistema de gestão para empresas de compra e venda de sucata. O sistema permite registrar compras, saídas, exclusões, e gerenciar os valores do caixa. Ele também possui integração com o Telegram para notificações automáticas e está configurado como um Progressive Web App (PWA) hospedado no Netlify.",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
 }
