@@ -1,5 +1,5 @@
 //URL do backend
-const backendUrl = 'http://lucienesucata.infinityfreeapp.com';
+const backendUrl = 'https://lucienesucata.infinityfreeapp.com';
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarUsuario();
