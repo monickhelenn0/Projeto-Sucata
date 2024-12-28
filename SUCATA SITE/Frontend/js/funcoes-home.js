@@ -1,5 +1,5 @@
-// Defina a URL do backend
-const backendUrl = 'http://lucienesucata.infinityfreeapp.com/home.php';
+//URL do backend
+const backendUrl = 'http://lucienesucata.infinityfreeapp.com';
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarUsuario();
