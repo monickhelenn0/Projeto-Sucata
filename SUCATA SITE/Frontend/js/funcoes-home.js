@@ -1,147 +1,171 @@
+// Defina a URL do backend
+const backendUrl = 'https://lucienesucata.infinityfreeapp.com/home.php';
+
 document.addEventListener("DOMContentLoaded", () => {
     carregarUsuario();
-    configurarDropdown();
+    zerarTotaisHome();
     atualizarTotaisHome();
+    configurarBotoesDia();
 });
 
 // Carregar o nome do usuário e a hora do login no dropdown
 function carregarUsuario() {
-    // Recuperar os dados do usuário armazenados no localStorage
     const dadosUsuario = localStorage.getItem("usuarioLogado");
     let usuarioLogado = "Usuário";
     let horaLogin = null;
 
     if (dadosUsuario) {
-        // Converter os dados do JSON string para um objeto
         const dados = JSON.parse(dadosUsuario);
         usuarioLogado = dados.usuario || "Usuário";
         horaLogin = dados.horarioLogin || null;
     }
 
-    // Configurar o nome do usuário no topo
     document.getElementById("username").innerText = usuarioLogado;
 
-    // Configurar as informações no dropdown
-    document.getElementById("user-info").innerText = `Usuário: ${usuarioLogado}`;
     if (horaLogin) {
-        document.getElementById("login-time").innerText = `Hora do login: ${horaLogin}`;
-    } else {
-        const horaAtual = new Date().toLocaleString("pt-BR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-        });
-        localStorage.setItem(
-            "usuarioLogado",
-            JSON.stringify({ usuario: usuarioLogado, horarioLogin: horaAtual })
-        );
-        document.getElementById("login-time").innerText = `Hora do login: ${horaAtual}`;
+        document.getElementById("login-time").innerText = `Logado desde: ${horaLogin}`;
     }
 }
 
-// Configurar o comportamento do dropdown do usuário
-function configurarDropdown() {
-    const dropdown = document.getElementById("userDropdown");
-    const dropdownMenu = document.querySelector(".dropdown-menu[aria-labelledby='userDropdown']");
+// Função para finalizar o dia e enviar o resumo ao Telegram
+document.getElementById('finalizar-dia').addEventListener('click', async () => {
+    if (confirm('Deseja realmente finalizar o dia?')) {
+        try {
+            const response = await fetch(backendUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'finalizar_dia' })
+            });
 
-    // Alternar a exibição do dropdown ao clicar
-    dropdown.addEventListener("click", (event) => {
-        event.preventDefault();
-        dropdownMenu.classList.toggle("show");
-    });
-
-    // Fechar o dropdown ao clicar fora
-    document.addEventListener("click", (event) => {
-        if (!dropdown.contains(event.target) && dropdownMenu.classList.contains("show")) {
-            dropdownMenu.classList.remove("show");
+            const data = await response.json();
+            if (data.success) {
+                alert('Resumo enviado ao Telegram com sucesso.');
+                zerarTotaisHome();
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            alert('Erro ao finalizar o dia: ' + error.message);
         }
-    });
-}
+    }
+});
 
-// Atualizar todos os totais na página a partir do localStorage
-function atualizarTotaisHome() {
-    const totalCaixaPix = parseFloat(localStorage.getItem("totalCaixaPix")) || 0;
-    const totalCaixaEspecie = parseFloat(localStorage.getItem("totalCaixaEspecie")) || 0;
-    const totalAdicionadoPix = parseFloat(localStorage.getItem("totalAdicionadoPix")) || 0;
-    const totalAdicionadoEspecie = parseFloat(localStorage.getItem("totalAdicionadoEspecie")) || 0;
-    const totalSaidasPix = parseFloat(localStorage.getItem("totalSaidasPix")) || 0;
-    const totalSaidasEspecie = parseFloat(localStorage.getItem("totalSaidasEspecie")) || 0;
-    const totalComprasPix = parseFloat(localStorage.getItem("totalComprasPix")) || 0;
-    const totalComprasEspecie = parseFloat(localStorage.getItem("totalComprasEspecie")) || 0;
+// Zerar os totais na página Home
+async function zerarTotaisHome() {
+    try {
+        const response = await fetch(backendUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'zerar_totais' })
+        });
 
-    // Atualizar os valores na interface
-    atualizarValorComRotulo("total-caixa-pix", "PIX: ", totalCaixaPix);
-    atualizarValorComRotulo("total-caixa-especie", "Espécie: ", totalCaixaEspecie);
-
-    // Atualizar o total adicionado no dia (soma de PIX + Espécie adicionados)
-    const totalAdicionadoNoDia = totalAdicionadoPix + totalAdicionadoEspecie;
-    atualizarValorComRotulo("total-adicionado-no-dia", "", totalAdicionadoNoDia);
-
-    atualizarValorComRotulo("total-saidas-pix", "PIX: ", totalSaidasPix);
-    atualizarValorComRotulo("total-saidas-especie", "Espécie: ", totalSaidasEspecie);
-    atualizarValorComRotulo("total-comprado-pix", "PIX: ", totalComprasPix);
-    atualizarValorComRotulo("total-comprado-especie", "Espécie: ", totalComprasEspecie);
-}
-
-// Atualizar valores com rótulos fixos
-function atualizarValorComRotulo(id, rotulo, valor) {
-    const elemento = document.getElementById(id);
-    if (elemento) {
-        elemento.innerText = `${rotulo}${new Intl.NumberFormat("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-        }).format(valor)}`;
+        const data = await response.json();
+        if (data.success) {
+            console.log("Totais zerados com sucesso.");
+        } else {
+            console.error("Erro ao zerar totais:", data.message);
+        }
+    } catch (error) {
+        console.error("Erro ao zerar os totais:", error);
     }
 }
 
-// Adicionar valor ao caixa
-function adicionarCaixa() {
-    const valor = parseFloat(document.getElementById("valor-caixa").value) || 0;
-    const formaPagamento = document.getElementById("forma-pagamento").value;
+// Atualizar os totais na página Home com dados do backend
+async function atualizarTotaisHome() {
+    try {
+        const response = await fetch(backendUrl, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
 
-    if (valor <= 0) {
-        alert("Por favor, insira um valor válido.");
+        const data = await response.json();
+        if (data.success) {
+            const { total_compras, total_saidas, total_estoque, balanco, valor_recebido } = data.data;
+
+            document.getElementById("totalCaixaPix").innerText = `R$ ${(total_compras || 0).toFixed(2)}`;
+            document.getElementById("totalCaixaEspecie").innerText = `R$ ${(total_saidas || 0).toFixed(2)}`;
+            document.getElementById("totalEstoque").innerText = `${(total_estoque || 0)} itens`;
+            document.getElementById("balanco").innerText = `R$ ${(balanco || 0).toFixed(2)}`;
+            document.getElementById("valor-recebido").innerText = `R$ ${(valor_recebido || 0).toFixed(2)}`;
+        } else {
+            console.error('Erro na resposta do servidor:', data.message);
+        }
+    } catch (error) {
+        console.error('Erro ao atualizar os totais:', error);
+    }
+}
+
+// Registrar o valor inicial dado pela gerente
+document.getElementById('iniciar-dia').addEventListener('click', async () => {
+    const valorInicial = parseFloat(prompt('Digite o valor inicial para o dia:'));
+
+    if (isNaN(valorInicial) || valorInicial <= 0) {
+        alert('Por favor, insira um valor válido.');
         return;
     }
 
-    // Atualizar valores no localStorage e na interface
-    if (formaPagamento === "pix") {
-        const totalCaixaPix = parseFloat(localStorage.getItem("totalCaixaPix")) || 0;
-        const totalAdicionadoPix = parseFloat(localStorage.getItem("totalAdicionadoPix")) || 0;
+    try {
+        const response = await fetch(backendUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'registrar_valor_inicial', valor_inicial: valorInicial })
+        });
 
-        localStorage.setItem("totalCaixaPix", totalCaixaPix + valor);
-        localStorage.setItem("totalAdicionadoPix", totalAdicionadoPix + valor);
-    } else if (formaPagamento === "especie") {
-        const totalCaixaEspecie = parseFloat(localStorage.getItem("totalCaixaEspecie")) || 0;
-        const totalAdicionadoEspecie = parseFloat(localStorage.getItem("totalAdicionadoEspecie")) || 0;
+        const data = await response.json();
+        if (data.success) {
+            alert("Valor inicial registrado com sucesso.");
+            document.getElementById('valor-recebido').innerText = `R$ ${valorInicial.toFixed(2)}`;
+        } else {
+            console.error("Erro ao registrar valor inicial:", data.message);
+        }
+    } catch (error) {
+        console.error("Erro ao registrar o valor inicial:", error);
+    }
+});
 
-        localStorage.setItem("totalCaixaEspecie", totalCaixaEspecie + valor);
-        localStorage.setItem("totalAdicionadoEspecie", totalAdicionadoEspecie + valor);
+// Função para cadastrar o valor do caixa
+document.getElementById('form-caixa').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const valorCaixa = parseFloat(document.getElementById('valor-caixa').value);
+    if (isNaN(valorCaixa) || valorCaixa <= 0) {
+        alert('Por favor, insira um valor válido para o caixa.');
+        return;
     }
 
-    atualizarTotaisHome();
+    try {
+        const response = await fetch(backendUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'cadastrar_caixa', valor_caixa: valorCaixa })
+        });
 
-    // Limpar os campos de entrada
-    document.getElementById("valor-caixa").value = "";
-    document.getElementById("forma-pagamento").value = "pix";
+        const data = await response.json();
+        if (data.success) {
+            document.getElementById('mensagem-caixa').innerText = 'Caixa cadastrado com sucesso!';
+            document.getElementById('valor-recebido').innerText = `R$ ${valorCaixa.toFixed(2)}`;
+        } else {
+            alert(data.message);
+        }
+    } catch (error) {
+        alert('Erro ao cadastrar o caixa: ' + error.message);
+    }
+});
 
-    alert("Valor adicionado ao caixa com sucesso!");
-}
+// Configurar botões ou interações do dia
+function configurarBotoesDia() {
+    document.getElementById("btnRegistrarValorInicial").addEventListener("click", () => {
+        const valor = parseFloat(prompt("Digite o valor inicial dado pela gerente:"));
+        if (!isNaN(valor) && valor > 0) {
+            registrarValorInicial(valor);
+        } else {
+            alert("Por favor, insira um valor válido.");
+        }
+    });
 
-// Sair e desconectar o usuário
-function logout() {
-    localStorage.removeItem("usuarioLogado");
-    alert("Usuário desconectado com sucesso!");
-    window.location.href = "login.html";
-}
-
-// Formatar valores em moeda brasileira
-function formatarMoeda(valor) {
-    return new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-    }).format(valor);
+    document.getElementById("btnFinalizarDia").addEventListener("click", () => {
+        if (confirm("Tem certeza de que deseja finalizar o dia e enviar o resumo para o Telegram?")) {
+            finalizarDia();
+        }
+    });
 }

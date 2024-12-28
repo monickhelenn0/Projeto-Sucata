@@ -55,19 +55,12 @@ function finalizarCompra() {
         return;
     }
 
-    // Solicitar confirmação do usuário
-    const confirmar = window.confirm("Tem certeza que deseja finalizar a compra?");
-    if (!confirmar) {
-        return; // Cancelar a finalização se o usuário não confirmar
-    }
-
     const formaPagamento = document.getElementById("forma-pagamento").value;
     if (!formaPagamento) {
         alert("Escolha o método de pagamento antes de finalizar a compra.");
         return;
     }
 
-    // Capturar data e hora
     const agora = new Date();
     const data = agora.toLocaleDateString();
     const hora = agora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -82,29 +75,31 @@ function finalizarCompra() {
 
     historicoCompras.push(compra);
     localStorage.setItem("historicoCompras", JSON.stringify(historicoCompras));
-    if (formaPagamento === "especie") {
-        const totalCompradoEspecie = parseFloat(localStorage.getItem("totalCompradoEspecie")) || 0;
-        localStorage.setItem("totalCompradoEspecie", totalCompradoEspecie + totalCompras);
-    } else if (formaPagamento === "pix") {
-        const totalCompradoPix = parseFloat(localStorage.getItem("totalCompradoPix")) || 0;
-        localStorage.setItem("totalCompradoPix", totalCompradoPix + totalCompras);
-    }
-    
+
+    // Atualizar totais globais de compras e caixa
+    atualizarTotaisGlobais(formaPagamento, totalCompras);
+
     // Limpar a lista de compras e atualizar a interface
     listaCompras = [];
     totalCompras = 0;
     atualizarListaCompras();
     carregarHistorico();
 
-    //Enviar as informações para home
-    if (formaPagamento === "especie") {
-        const totalCompradoEspecie = parseFloat(localStorage.getItem("totalCompradoEspecie")) || 0;
-        localStorage.setItem("totalCompradoEspecie", totalCompradoEspecie + totalCompras);
-    } else if (formaPagamento === "pix") {
-        const totalCompradoPix = parseFloat(localStorage.getItem("totalCompradoPix")) || 0;
-        localStorage.setItem("totalCompradoPix", totalCompradoPix + totalCompras);
+    alert("Compra finalizada com sucesso!");
+}
+
+// Função para atualizar os totais globais no localStorage
+function atualizarTotaisGlobais(formaPagamento, valor) {
+    if (formaPagamento === "pix") {
+        const totalComprasPix = parseFloat(localStorage.getItem("totalComprasPix")) || 0;
+        localStorage.setItem("totalComprasPix", totalComprasPix + valor);
+    } else if (formaPagamento === "especie") {
+        const totalComprasEspecie = parseFloat(localStorage.getItem("totalComprasEspecie")) || 0;
+        localStorage.setItem("totalComprasEspecie", totalComprasEspecie + valor);
     }
-    
+
+    const totalGeralCompras = parseFloat(localStorage.getItem("totalGeralCompras")) || 0;
+    localStorage.setItem("totalGeralCompras", totalGeralCompras + valor);
 }
 
 // Função para carregar o histórico de compras
@@ -133,7 +128,7 @@ function verDetalhesCompra(index) {
     const detalhesHtml = `
         <p><strong>Data:</strong> ${compra.data}</p>
         <p><strong>Total:</strong> R$ ${compra.total.toFixed(2)}</p>
-        <p><strong>Forma de Pagamento:</strong> ${compra.formaPagamento === "pix" ? "PIX" : "Especie"}</p>
+        <p><strong>Forma de Pagamento:</strong> ${compra.formaPagamento === "pix" ? "PIX" : "Espécie"}</p>
         <h5>Itens:</h5>
         <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>
@@ -175,31 +170,10 @@ function confirmarExclusaoHistorico(index) {
     }
 
     const compraRemovida = historicoCompras.splice(index, 1)[0];
-    const exclusoes = JSON.parse(localStorage.getItem("exclusoes")) || [];
     exclusoes.push({ ...compraRemovida, motivo });
     localStorage.setItem("exclusoes", JSON.stringify(exclusoes));
     localStorage.setItem("historicoCompras", JSON.stringify(historicoCompras));
     carregarHistorico();
-}
-
-
-// Função para excluir uma compra do histórico
-function excluirHistorico(index, motivo) {
-    const compraRemovida = historicoCompras.splice(index, 1)[0]; // Remove a compra do histórico
-    exclusoes.push({ ...compraRemovida, motivo }); // Adiciona aos itens excluídos
-    localStorage.setItem("exclusoes", JSON.stringify(exclusoes));
-    localStorage.setItem("historicoCompras", JSON.stringify(historicoCompras));
-
-    // Atualizar os totais de compras no localStorage
-    if (compraRemovida.formaPagamento === "especie") {
-        const totalCompradoEspecie = parseFloat(localStorage.getItem("totalCompradoEspecie")) || 0;
-        localStorage.setItem("totalCompradoEspecie", totalCompradoEspecie - compraRemovida.total);
-    } else if (compraRemovida.formaPagamento === "pix") {
-        const totalCompradoPix = parseFloat(localStorage.getItem("totalCompradoPix")) || 0;
-        localStorage.setItem("totalCompradoPix", totalCompradoPix - compraRemovida.total);
-    }
-
-    carregarHistorico(); // Atualiza a interface do histórico
 }
 
 // Função para filtrar o histórico por data
@@ -214,7 +188,7 @@ function filtrarHistoricoPorData() {
             row.innerHTML = `
                 <td>${compra.data}</td>
                 <td>R$ ${compra.total.toFixed(2)}</td>
-                <td>${compra.formaPagamento === "pix" ? "PIX" : "Especie"}</td>
+                <td>${compra.formaPagamento === "pix" ? "PIX" : "Espécie"}</td>
                 <td>
                     <button onclick="verDetalhesCompra(${index})" class="btn btn-info btn-sm">Ver Detalhes</button>
                     <button onclick="confirmarExclusaoHistorico(${index})" class="btn btn-danger btn-sm">Excluir</button>
@@ -224,7 +198,7 @@ function filtrarHistoricoPorData() {
         }
     });
 }
-//botao imprimir
+
 // Função para imprimir a lista de compras
 function imprimirLista() {
     if (listaCompras.length === 0) {
@@ -232,7 +206,6 @@ function imprimirLista() {
         return;
     }
 
-    // Gerar o HTML da lista de compras
     const conteudo = `
         <h1 style="text-align: center;">Lista de Compras</h1>
         <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
@@ -262,7 +235,6 @@ function imprimirLista() {
         <h3 style="text-align: right;">Total Geral: R$ ${totalCompras.toFixed(2)}</h3>
     `;
 
-    // Abrir uma nova janela para impressão
     const novaJanela = window.open("", "_blank");
     novaJanela.document.write(`
         <html>
@@ -303,9 +275,9 @@ function imprimirLista() {
     novaJanela.print();
     novaJanela.close();
 }
+
 // Inicializar a página
 window.onload = function () {
     atualizarListaCompras();
     carregarHistorico();
 };
-

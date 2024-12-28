@@ -1,9 +1,0 @@
-flask
-flask_sqlalchemy
-gunicorn
-psycopg2-binary
-fastapi
-uvicorn
-sqlalchemy
-psycopg2-binary
-python-dotenv

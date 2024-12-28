@@ -3,158 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOME - Totais do Dia</title>
-    <link href="vendor/bootstrap.min.css" rel="stylesheet">
-    <link href="css/estilos-dashboard.css" rel="stylesheet">
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <title>Dashboard - Home</title>
+    <link rel="stylesheet" href="css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="css/estilos-dashboard.css">
+    <script src="js/funcoes-home.js" defer></script>
+    <script src="js/funcoes-telegram.js" defer></script>
 </head>
-<body id="page-top">
-    <div id="wrapper">
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">Luciene Sucatas</div>
-            </a>
-            <hr class="sidebar-divider my-0">
-            <li class="nav-item">
-                <a class="nav-link" href="index.html">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Home</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="compras.html">
-                    <i class="fas fa-fw fa-shopping-cart"></i>
-                    <span>Compras</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="saidas.html">
-                    <i class="fas fa-fw fa-minus-circle"></i>
-                    <span>Saídas</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="abater-materiais.html">
-                    <i class="fas fa-fw fa-box"></i>
-                    <span>Abater Materiais</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="estoque.html">
-                    <i class="fas fa-fw fa-box"></i>
-                    <span>Estoque</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="exclusoes.html">
-                    <i class="fas fa-fw fa-trash"></i>
-                    <span>Itens Excluídos</span>
-                </a>
-            </li>
-        </ul>    
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
+<body>
+    <div id="wrapper" class="d-flex">
+        <!-- Barra de Navegação Lateral -->
+        <nav class="bg-primary sidebar sidebar-dark">
+            <div class="sidebar-sticky">
+                <h4 class="sidebar-header text-center py-4">Luciene Sucatas</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link text-white" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="compras.html">Compras</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="saidas.html">Saídas</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="exclusoes.html">Exclusões</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="estoque.html">Estoque</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="login.html" onclick="sair();">Sair</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Conteúdo Principal -->
+        <div id="content-wrapper" class="flex-grow-1">
             <div id="content">
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                    <div class="d-flex justify-content-between align-items-center w-100">
-                        <h1 class="h3 mb-0 text-gray-800">Resumo do Dia</h1>
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item dropdown no-arrow">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span id="username" class="mr-2 d-none d-lg-inline text-gray-600 small">Usuário</span>
-                                    <i class="fas fa-user-circle fa-lg"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                    <span class="dropdown-item" id="user-info">Usuário: </span>
-                                    <span class="dropdown-item" id="login-time">Hora do login: </span>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#" onclick="logout()">
-                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                        Sair
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 shadow">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <span id="username">Usuário</span>
+                        </li>
+                    </ul>
                 </nav>
 
-                <!-- Main Content -->
                 <div class="container-fluid">
-                    <!-- Totais -->
-                    <div class="row">
-                        <!-- Total Caixa -->
-                        <div class="col-md-6">
-                            <div class="card shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total do Caixa</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-caixa-pix">PIX: R$ 0,00</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-caixa-especie">Espécie: R$ 0,00</div>
-                                </div>
-                            </div>
+                    <div class="row mb-4">
+                        <div class="col-lg-6">
+                            <button id="iniciar-dia" class="btn btn-warning btn-lg">Iniciar Dia</button>
                         </div>
-                        <!-- Total Adicionado no Dia -->
-                        <div class="col-md-6">
-                            <div class="card shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Adicionado no Dia</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-adicionado-no-dia">R$ 0,00</div>
-                                </div>
-                            </div>
+                        <div class="col-lg-6">
+                            <button id="finalizar-dia" class="btn btn-danger btn-lg">Finalizar Dia</button>
                         </div>
                     </div>
 
-                    <div class="row mt-4">
-                        <!-- Saídas -->
-                        <div class="col-md-6">
-                            <div class="card shadow h-100 py-2">
+                    <h1 class="h3 mb-4 text-gray-800">Resumo do Dia</h1>
+
+                    <div class="row">
+                        <div class="col-lg-4 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Caixa</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="valor-recebido">R$ 0,00</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 mb-4">
+                            <div class="card border-left-danger shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Saídas</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-saidas-pix">PIX: R$ 0,00</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-saidas-especie">Espécie: R$ 0,00</div>
+                                    <div class="text-gray-800">PIX: <span id="total-saidas-pix">R$ 0,00</span></div>
+                                    <div class="text-gray-800">Espécie: <span id="total-saidas-especie">R$ 0,00</span></div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Compras -->
-                        <div class="col-md-6">
-                            <div class="card shadow h-100 py-2">
+
+                        <div class="col-lg-4 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Compras</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-comprado-pix">PIX: R$ 0,00</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-comprado-especie">Espécie: R$ 0,00</div>
+                                    <div class="text-gray-800">PIX: <span id="total-compras-pix">R$ 0,00</span></div>
+                                    <div class="text-gray-800">Espécie: <span id="total-compras-especie">R$ 0,00</span></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Botões de controle -->
-                    <div class="d-flex justify-content-start mb-4 mt-4">
-                        <button class="btn btn-warning mr-2" onclick="iniciarDia()">Iniciar Dia</button>
-                        <button class="btn btn-danger" onclick="finalizarDia()">Finalizar Dia</button>
-                    </div>
-
-                    <!-- Adicionar ao Caixa -->
-                    <h4>Adicionar ao Caixa</h4>
-                    <div class="form-inline">
-                        <input type="number" id="valor-caixa" class="form-control mr-2" placeholder="Valor">
-                        <select id="forma-pagamento" class="form-control mr-2">
-                            <option value="pix">PIX</option>
-                            <option value="especie">Espécie</option>
-                        </select>
-                        <button class="btn btn-primary" onclick="adicionarCaixa()">Adicionar</button>
+                    <div class="row mt-5">
+                        <div class="col-lg-12">
+                            <h2>Cadastrar Total do Caixa</h2>
+                            <form id="form-caixa" class="form-inline">
+                                <input type="number" id="valor-caixa" class="form-control mb-2 mr-sm-2" placeholder="Valor" required>
+                                <button type="submit" class="btn btn-primary mb-2">Cadastrar Caixa</button>
+                            </form>
+                            <p id="mensagem-caixa" class="mt-3 text-success"></p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById('finalizar-dia').addEventListener('click', async () => {
+            if (confirm('Deseja realmente finalizar o dia?')) {
+                const mensagem = "Resumo do Dia:\nCaixa: R$ 0,00\nSaídas PIX: R$ 0,00\nSaídas Espécie: R$ 0,00\nCompras PIX: R$ 0,00\nCompras Espécie: R$ 0,00";
+                try {
+                    await enviarTelegram(mensagem);
+                    alert('Resumo enviado ao Telegram com sucesso.');
+                } catch (error) {
+                    alert('Erro ao enviar mensagem ao Telegram.');
+                }
+            }
+        });
 
-    <script src="vendor/jquery.min.js"></script>
-    <script src="vendor/bootstrap.bundle.min.js"></script>
-    <script src="js/funcoes-home.js"></script>
-    <script src="js/funcoes-login.js"></script>
+        document.getElementById('form-caixa').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const valorCaixa = parseFloat(document.getElementById('valor-caixa').value);
+            if (isNaN(valorCaixa) || valorCaixa <= 0) {
+                alert('Por favor, insira um valor válido para o caixa.');
+                return;
+            }
+
+            try {
+                const response = await fetch('lucienesucata.infinityfreeapp.com/home.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'cadastrar_caixa', valor_caixa: valorCaixa })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('mensagem-caixa').innerText = 'Caixa cadastrado com sucesso!';
+                    document.getElementById('valor-recebido').innerText = `R$ ${valorCaixa.toFixed(2)}`;
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                alert('Erro ao cadastrar o caixa.');
+            }
+        });
+    </script>
 </body>
 </html>

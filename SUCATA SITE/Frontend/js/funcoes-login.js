@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm.addEventListener("submit", realizarLogin);
 });
 
+const API_URL = "https://lucienesucata.infinityfreeapp.com/backend";
+
 /**
  * Credenciais de login permitidas.
  */
@@ -102,14 +104,3 @@ function sair() {
     localStorage.removeItem("usuarioLogado");
     window.location.href = "login.html";
 }
-/**
- * Verifica se o usuário está logado. Caso contrário, redireciona para a tela de login.
- */
-(function verificarUsuarioLogado() {
-    const usuarioLogado = localStorage.getItem("usuarioLogado");
-
-    if (!usuarioLogado) {
-        alert("Você precisa estar logado para acessar esta página.");
-        window.location.href = "login.html";
-    }
-})();
