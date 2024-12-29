@@ -3,37 +3,49 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm.addEventListener("submit", realizarLogin);
 });
 
-const API_URL = "https://lucienesucata.infinityfreeapp.com/backend";
+const API_URL = "/api/home.php"; // Caminho para o backend
 
 /**
- * Credenciais de login permitidas.
- */
-const usuarios = {
-    "GP.Varzea": "varzea01",
-    "GP.Amarelo": "amarelo02",
-};
-
-/**
- * Realiza o login verificando as credenciais.
+ * Realiza o login verificando as credenciais no backend.
  * @param {Event} event - Evento de envio do formulário.
  */
-function realizarLogin(event) {
+async function realizarLogin(event) {
     event.preventDefault();
 
     const usuario = document.getElementById("usuario").value.trim();
     const senha = document.getElementById("senha").value.trim();
 
-    if (usuarios[usuario] === senha) {
-        salvarUsuarioLogado(usuario);
-        window.location.href = "index.html"; // Redireciona para a página principal
-    } else {
-        exibirErroLogin();
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "login",
+                username: usuario,
+                password: senha,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            salvarUsuarioLogado(data.user); // Salva os dados do usuário retornados pelo backend
+            window.location.href = "index.html"; // Redireciona para a página principal
+        } else {
+            exibirErroLogin(data.message || "Usuário ou senha incorretos.");
+        }
+    } catch (error) {
+        exibirErroLogin(`Erro ao realizar login: ${error.message}`);
     }
 }
 
 /**
  * Salva os dados do usuário logado no localStorage.
- * @param {string} usuario - Nome do usuário logado.
+ * @param {Object} usuario - Dados do usuário retornados pelo backend.
  */
 function salvarUsuarioLogado(usuario) {
     const horarioLogin = new Date().toLocaleString("pt-BR", {
@@ -46,7 +58,7 @@ function salvarUsuarioLogado(usuario) {
     });
 
     const dadosUsuario = {
-        usuario,
+        usuario: usuario.nome,
         horarioLogin,
     };
 
@@ -55,10 +67,12 @@ function salvarUsuarioLogado(usuario) {
 
 /**
  * Exibe uma mensagem de erro ao usuário.
+ * @param {string} mensagem - Mensagem de erro a ser exibida.
  */
-function exibirErroLogin() {
+function exibirErroLogin(mensagem = "Erro ao realizar login.") {
     const erroDiv = document.getElementById("login-error");
     erroDiv.style.display = "block";
+    erroDiv.innerText = mensagem;
     setTimeout(() => {
         erroDiv.style.display = "none";
     }, 3000);
