@@ -1,8 +1,9 @@
 services:
   - type: web
-    name: backend-sucata
+    name: projeto-sucata
     env: docker
     dockerfilePath: ./Dockerfile
+    plan: free
     envVars:
       - key: DB_HOST
         value: sql308.infinityfree.com
