@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: backend-sucata
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DB_HOST
+        value: sql308.infinityfree.com
+      - key: DB_NAME
+        value: if0_37921675_sucata
+      - key: DB_USER
+        value: if0_37921675
+      - key: DB_PASSWORD
+        value: Sucata22
+    plan: free
