@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm.addEventListener("submit", realizarLogin);
 });
 
-const API_URL = "/api/home.php"; // Caminho para o backend
+const API_URL = "https://lucienesucata.infinityfreeapp.com/api/home.php";
 
 /**
  * Realiza o login verificando as credenciais no backend.
