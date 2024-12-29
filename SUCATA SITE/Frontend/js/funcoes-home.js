@@ -83,10 +83,9 @@ document.getElementById('form-caixa').addEventListener('submit', async (event) =
 // Função para atualizar os totais na página Home
 async function atualizarTotaisHome() {
     try {
-        const response = await fetch('/api/home.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'atualizar_totais' })
+        const response = await fetch('/api/home.php?action=atualizar_totais', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
         });
 
         const data = await response.json();
@@ -102,6 +101,7 @@ async function atualizarTotaisHome() {
         console.error('Erro ao atualizar os totais:', error.message);
     }
 }
+
 
 // Chamada inicial para atualizar os totais ao carregar a página
 document.addEventListener('DOMContentLoaded', atualizarTotaisHome);
