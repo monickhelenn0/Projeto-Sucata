@@ -1,9 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
-    loginForm.addEventListener("submit", realizarLogin);
+    if (loginForm) {
+        loginForm.addEventListener("submit", realizarLogin);
+    }
 });
 
-const API_URL = "https://lucienesucata.infinityfreeapp.com/api/home.php";
+const API_URL = "/api/home.php";
 
 /**
  * Realiza o login verificando as credenciais no backend.
