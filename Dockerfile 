@@ -1,18 +1,14 @@
-# Usar imagem oficial do PHP com Apache
+# Use a imagem oficial do PHP
 FROM php:8.1-apache
 
-# Instalar extensões necessárias (exemplo: MySQL)
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+# Instale extensões necessárias
+RUN docker-php-ext-install mysqli
 
-# Copiar os arquivos do projeto para o diretório padrão do Apache
-COPY ./Backend /var/www/html/
+# Copie os arquivos do projeto para o contêiner
+COPY ./ /var/www/html/
 
-# Configurar permissões
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+# Ajuste permissões
+RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
 
-# Expor a porta 80
+# Exponha a porta padrão do Apache
 EXPOSE 80
-
-# Iniciar o servidor Apache
-CMD ["apache2-foreground"]
