@@ -88,6 +88,10 @@ async function atualizarTotaisHome() {
             headers: { 'Content-Type': 'application/json' }
         });
 
+        if (!response.ok) {
+            throw new Error('Erro na requisição ao servidor.');
+        }
+
         const data = await response.json();
         if (data.success) {
             document.getElementById('total-caixa-pix').innerText = `PIX: R$ ${data.data.pix.toFixed(2)}`;
