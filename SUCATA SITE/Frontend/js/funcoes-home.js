@@ -1,5 +1,5 @@
 //URL do backend
-const backendUrl = 'http://lucienesucata.infinityfreeapp.com';
+const backendUrl = '/api/home.php';
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarUsuario();
