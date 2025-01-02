@@ -19,7 +19,7 @@ async function realizarLogin(event) {
     }
 
     try {
-        const response = await fetch("https://lucienesucatas.netlify.app/api/home.php", {
+        const response = await fetch("https://lucienesucatas.netlify.app", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
