@@ -2,7 +2,7 @@ services:
   - type: web
     name: projeto-backend
     env: docker
-    dockerfilePath: ./SUCATA SITE/Dockerfile
+    dockerfilePath: ./sucata/Dockerfile
     plan: free
     envVars:
       - key: DB_HOST
