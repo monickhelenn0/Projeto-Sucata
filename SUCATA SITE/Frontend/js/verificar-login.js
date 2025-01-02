@@ -1,11 +1,8 @@
-/**
- * Verifica se o usuário está logado. Caso contrário, redireciona para a tela de login.
- */
-(function verificarUsuarioLogado() {
-    const usuarioLogado = localStorage.getItem("usuarioLogado");
+const backendUrl = 'https://projeto-sucata.onrender.com';
 
-    if (!usuarioLogado) {
-        alert("Você precisa estar logado para acessar esta página.");
-        window.location.href = "login.html";
-    }
-})();
+// Exemplo de requisição:
+const response = await fetch(`${backendUrl}/index.php`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'login', username, password }),
+});
