@@ -1,8 +1,8 @@
 <?php
-$host = getenv('DB_HOST') ?: 'sql308.infinityfree.com'; // URL do host no InfinityFree
-$db_name = getenv('DB_NAME') ?: 'if0_37921675_sucata'; // Nome do banco
-$user = getenv('DB_USER') ?: 'if0_37921675'; // Usuário do banco
-$password = getenv('DB_PASSWORD') ?: 'Sucata22'; // Senha do banco
+$host = getenv('sql308.infinityfree.com') ?: 'sql308.infinityfree.com'; // URL do host no InfinityFree
+$db_name = getenv('if0_37921675_sucata') ?: 'if0_37921675_sucata'; // Nome do banco
+$user = getenv('if0_37921675') ?: 'if0_37921675'; // Usuário do banco
+$password = getenv('Sucata22') ?: 'Sucata22'; // Senha do banco
 
 // Tente conectar ao banco
 $conn = new mysqli($host, $user, $password, $db_name);
