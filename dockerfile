@@ -1,17 +1,16 @@
-# Use a imagem oficial do PHP com Apache
 FROM php:8.1-apache
 
-# Instale as extensões necessárias para o PHP (como MySQLi)
+# Instale as extensões necessárias
 RUN docker-php-ext-install mysqli
 
-# Copie os arquivos do projeto para o diretório padrão do Apache
-COPY . /var/www/html/
+# Copie os arquivos do Backend para o Apache
+COPY ./Backend /var/www/html
 
 # Ajuste permissões
 RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
 
+# Configure o DirectoryIndex do Apache
+RUN echo "DirectoryIndex index.php" >> /etc/apache2/apache2.conf
+
 # Exponha a porta padrão do Apache
 EXPOSE 80
-
-# Inicie o Apache no modo foreground
-CMD ["apache2-foreground"]

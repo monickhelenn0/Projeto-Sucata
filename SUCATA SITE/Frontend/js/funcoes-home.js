@@ -5,7 +5,7 @@ const backendUrl = 'https://projeto-sucata-oen5.onrender.com';
 document.getElementById('finalizar-dia').addEventListener('click', async () => {
     if (confirm('Deseja realmente finalizar o dia?')) {
         try {
-            const response = await fetch('/api/home.php', {
+            const response = await fetch('/api/index.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'finalizar_dia' })
@@ -33,7 +33,7 @@ document.getElementById('iniciar-dia').addEventListener('click', async () => {
     }
 
     try {
-        const response = await fetch('/api/home.php', {
+        const response = await fetch('/api/index.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'iniciar_dia', valor_inicial: valorInicial })
@@ -62,7 +62,7 @@ document.getElementById('form-caixa').addEventListener('submit', async (event) =
     }
 
     try {
-        const response = await fetch('/api/home.php', {
+        const response = await fetch('/api/index.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'cadastrar_caixa', valor_caixa: valorCaixa })
@@ -83,7 +83,7 @@ document.getElementById('form-caixa').addEventListener('submit', async (event) =
 // Função para atualizar os totais na página Home
 async function atualizarTotaisHome() {
     try {
-        const response = await fetch('/api/home.php?action=atualizar_totais', {
+        const response = await fetch('/api/index.php?action=atualizar_totais', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
