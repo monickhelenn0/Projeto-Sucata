@@ -1,5 +1,5 @@
 // URL do backend
-const backendUrl = '/api/home.php';
+const backendUrl = 'https://projeto-sucata-oen5.onrender.com';
 
 // Função para finalizar o dia e enviar o resumo ao Telegram
 document.getElementById('finalizar-dia').addEventListener('click', async () => {
