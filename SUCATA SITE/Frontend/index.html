@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Home</title>
+    <link rel="stylesheet" href="css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="css/estilos-dashboard.css">
+    <script src="js/funcoes-home.js" defer></script>
+    <script src="js/funcoes-telegram.js" defer></script>
+    <link rel="icon" href="data:;base64,=">
+</head>
+<body>
+    <div id="wrapper" class="d-flex">
+        <!-- Barra de Navegação Lateral -->
+        <nav class="bg-primary sidebar sidebar-dark">
+            <div class="sidebar-sticky">
+                <h4 class="sidebar-header text-center py-4">Luciene Sucatas</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link text-white" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="compras.html">Compras</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="saidas.html">Saídas</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="exclusoes.html">Exclusões</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="estoque.html">Estoque</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="login.html" onclick="sair();">Sair</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Conteúdo Principal -->
+        <div id="content-wrapper" class="flex-grow-1">
+            <div id="content">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 shadow">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <span id="username">Usuário</span>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="container-fluid">
+                    <div class="row mb-4">
+                        <div class="col-lg-6">
+                            <button id="iniciar-dia" class="btn btn-warning btn-lg">Iniciar Dia</button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button id="finalizar-dia" class="btn btn-danger btn-lg">Finalizar Dia</button>
+                        </div>
+                    </div>
+
+                    <h1 class="h3 mb-4 text-gray-800">Resumo do Dia</h1>
+
+                    <div class="row">
+                        <div class="col-lg-4 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Caixa</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="valor-recebido">R$ 0,00</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 mb-4">
+                            <div class="card border-left-danger shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Saídas</div>
+                                    <div class="text-gray-800">PIX: <span id="total-saidas-pix">R$ 0,00</span></div>
+                                    <div class="text-gray-800">Espécie: <span id="total-saidas-especie">R$ 0,00</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Compras</div>
+                                    <div class="text-gray-800">PIX: <span id="total-compras-pix">R$ 0,00</span></div>
+                                    <div class="text-gray-800">Espécie: <span id="total-compras-especie">R$ 0,00</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-5">
+                        <div class="col-lg-12">
+                            <h2>Cadastrar Total do Caixa</h2>
+                            <form id="form-caixa" class="form-inline">
+                                <input type="number" id="valor-caixa" class="form-control mb-2 mr-sm-2" placeholder="Valor" required>
+                                <button type="submit" class="btn btn-primary mb-2">Cadastrar Caixa</button>
+                            </form>
+                            <p id="mensagem-caixa" class="mt-3 text-success"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('finalizar-dia').addEventListener('click', async () => {
+            if (confirm('Deseja realmente finalizar o dia?')) {
+                const mensagem = "Resumo do Dia:\nCaixa: R$ 0,00\nSaídas PIX: R$ 0,00\nSaídas Espécie: R$ 0,00\nCompras PIX: R$ 0,00\nCompras Espécie: R$ 0,00";
+                try {
+                    await enviarTelegram(mensagem);
+                    alert('Resumo enviado ao Telegram com sucesso.');
+                } catch (error) {
+                    alert('Erro ao enviar mensagem ao Telegram.');
+                }
+            }
+        });
+
+        document.getElementById('form-caixa').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const valorCaixa = parseFloat(document.getElementById('valor-caixa').value);
+            if (isNaN(valorCaixa) || valorCaixa <= 0) {
+                alert('Por favor, insira um valor válido para o caixa.');
+                return;
+            }
+
+            try {
+                const response = await fetch('lucienesucata.infinityfreeapp.com/home.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'cadastrar_caixa', valor_caixa: valorCaixa })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('mensagem-caixa').innerText = 'Caixa cadastrado com sucesso!';
+                    document.getElementById('valor-recebido').innerText = `R$ ${valorCaixa.toFixed(2)}`;
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                alert('Erro ao cadastrar o caixa.');
+            }
+        });
+    </script>
+</body>
+</html>

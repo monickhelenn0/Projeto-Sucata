@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="css/estilos-dashboard.css">
+    <script src="js/funcoes-login.js" defer></script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Login</h1>
+            <form id="loginForm">
+                <label for="usuario">Usuário:</label>
+                <input type="text" id="usuario" name="usuario" required>
+            
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" name="senha" required>
+            
+                <button type="submit">Entrar</button>
+            </form>
+            <div id="login-error" style="color: red; display: none;">Erro ao realizar login</div>
+            
+        </div>
+    
+        <script>
+            // URL do backend para autenticação
+            const backendUrl = '/api/home.php';
+    
+            // Evento de envio do formulário
+            document.getElementById('login-form').addEventListener('submit', async (event) => {
+                event.preventDefault(); // Impede o envio padrão do formulário
+    
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+    
+                if (!username || !password) {
+                    displayMessage('Por favor, preencha todos os campos.', 'error');
+                    return;
+                }
+    
+                try {
+                    // Enviar requisição para o backend
+                    const response = await fetch(backendUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'login', username, password })
+                    });
+    
+                    const data = await response.json();
+    
+                    if (data.success) {
+                        displayMessage('Login realizado com sucesso!', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'home.html'; // Redireciona para a página inicial
+                        }, 1000);
+                    } else {
+                        displayMessage(data.message, 'error');
+                    }
+                } catch (error) {
+                    displayMessage('Erro ao realizar login: ' + error.message, 'error');
+                }
+            });
+    
+            // Função para exibir mensagens de erro ou sucesso
+            function displayMessage(message, type) {
+                const messageElement = document.getElementById('message');
+                messageElement.textContent = message;
+                messageElement.className = `message ${type}`;
+            }
+        </script>
+    
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f9;
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+    
+            .container {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                text-align: center;
+                width: 300px;
+            }
+    
+            h1 {
+                margin-bottom: 20px;
+                font-size: 24px;
+            }
+    
+            label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+    
+            input {
+                width: 100%;
+                padding: 8px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+    
+            button {
+                width: 100%;
+                padding: 10px;
+                border: none;
+                border-radius: 4px;
+                background-color: #007bff;
+                color: white;
+                font-size: 16px;
+                cursor: pointer;
+            }
+    
+            button:hover {
+                background-color: #0056b3;
+            }
+    
+            .message {
+                margin-top: 15px;
+                font-size: 14px;
+            }
+    
+            .message.success {
+                color: #28a745;
+            }
+    
+            .message.error {
+                color: #dc3545;
+            }
+        </style>
+    </body>
+    </html>
+    
