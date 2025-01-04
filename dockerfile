@@ -4,7 +4,7 @@ FROM php:8.1-apache
 RUN docker-php-ext-install mysqli
 
 # Copie os arquivos do Backend para o Apache
-COPY ./SUCATA SITE/Backend/ /var/www/html/
+COPY ./sistema/Backend/ /var/www/html/
 
 # Ajuste permissões
 RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
