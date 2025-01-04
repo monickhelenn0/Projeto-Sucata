@@ -1,139 +1,116 @@
 <?php
-// saidas.php
-session_start();
-require 'db_connection.php';
+// Importar o arquivo de conexão com o banco
+require_once '../db_connection.php';
 
+// Configurar cabeçalhos para resposta JSON
 header('Content-Type: application/json');
 
-// Verificar se o usuário está autenticado
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Usuário não autenticado.']);
-    exit;
-}
-
+// Verificar método da requisição
 $method = $_SERVER['REQUEST_METHOD'];
 
-function enviarTelegram($mensagem) {
-    $TELEGRAM_TOKEN = "7670865041:AAFuZra_jwBXfACjc3ZBwee_GCrGrhYCCrc";
-    $CHAT_ID = "-4585457524";
-    $url = "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage";
-
-    $data = [
-        'chat_id' => $CHAT_ID,
-        'text' => $mensagem,
-        'parse_mode' => 'Markdown'
-    ];
-
-    $options = [
-        'http' => [
-            'header'  => "Content-type: application/json\r\n",
-            'method'  => 'POST',
-            'content' => json_encode($data),
-        ],
-    ];
-    $context  = stream_context_create($options);
-    file_get_contents($url, false, $context);
-}
-
 switch ($method) {
-    case 'GET':
-        // Listar saídas com ou sem filtro de data
-        if (isset($_GET['data_inicio']) && isset($_GET['data_fim'])) {
-            $data_inicio = $_GET['data_inicio'];
-            $data_fim = $_GET['data_fim'];
-
-            $query = "SELECT * FROM saidas WHERE data BETWEEN ? AND ? ORDER BY data DESC";
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param('ss', $data_inicio, $data_fim);
-            $stmt->execute();
-            $result = $stmt->get_result();
-
-            $saidas = [];
-            while ($row = $result->fetch_assoc()) {
-                $saidas[] = $row;
-            }
-
-            echo json_encode(['success' => true, 'data' => $saidas]);
-            $stmt->close();
-        } else {
-            // Listar todas as saídas
-            $query = "SELECT * FROM saidas ORDER BY data DESC";
-            $result = $conn->query($query);
-
-            $saidas = [];
-            while ($row = $result->fetch_assoc()) {
-                $saidas[] = $row;
-            }
-
-            echo json_encode(['success' => true, 'data' => $saidas]);
-        }
-        break;
-
     case 'POST':
         // Registrar uma nova saída
         $data = json_decode(file_get_contents('php://input'), true);
+        $funcionario = $data['funcionario'] ?? '';
+        $valor = $data['valor'] ?? 0.0;
+        $motivo = $data['motivo'] ?? '';
+        $forma_pagamento = $data['forma_pagamento'] ?? '';
 
-        if (isset($data['funcionario'], $data['valor'], $data['motivo'], $data['forma_pagamento'])) {
-            $funcionario = $data['funcionario'];
-            $valor = $data['valor'];
-            $motivo = $data['motivo'];
-            $forma_pagamento = $data['forma_pagamento'];
-            $usuario_logado = $_SESSION['username'] ?? 'Usuário Desconhecido';
-
-            if ($valor <= 0) {
-                echo json_encode(['success' => false, 'message' => 'Valor inválido.']);
-                exit;
-            }
-
-            $query = "INSERT INTO saidas (funcionario, valor, motivo, forma_pagamento, usuario_logado, data) VALUES (?, ?, ?, ?, ?, NOW())";
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param('sdsss', $funcionario, $valor, $motivo, $forma_pagamento, $usuario_logado);
-
-            if ($stmt->execute()) {
-                $mensagem = "📤 *Nova Saída Registrada*:\n👤 Funcionário: $funcionario\n💵 Valor: R$ " . number_format($valor, 2, ',', '.') . "\n📄 Motivo: $motivo\n💳 Forma de Pagamento: " . ($forma_pagamento === 'pix' ? 'PIX' : 'Espécie') . "\n👥 Usuário Logado: $usuario_logado";
-                enviarTelegram($mensagem);
-
-                echo json_encode(['success' => true, 'message' => 'Saída registrada com sucesso.']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Erro ao registrar saída.']);
-            }
-
-            $stmt->close();
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Dados incompletos.']);
+        if (!$funcionario || $valor <= 0 || !$motivo || !$forma_pagamento) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Dados incompletos ou inválidos.']);
+            exit;
         }
+
+        $stmt = $connection->prepare("INSERT INTO saidas (funcionario, valor, motivo, forma_pagamento, data) 
+                                      VALUES (?, ?, ?, ?, NOW())");
+        $stmt->bind_param('sdss', $funcionario, $valor, $motivo, $forma_pagamento);
+
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Saída registrada com sucesso.']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro ao registrar a saída.']);
+        }
+
+        $stmt->close();
+        break;
+
+    case 'GET':
+        // Listar saídas registradas
+        $result = $connection->query("SELECT id, funcionario, valor, motivo, forma_pagamento, data FROM saidas");
+
+        $saidas = [];
+        while ($row = $result->fetch_assoc()) {
+            $saidas[] = $row;
+        }
+
+        echo json_encode(['success' => true, 'data' => $saidas]);
         break;
 
     case 'DELETE':
-        // Excluir uma saída
-        $data = json_decode(file_get_contents('php://input'), true);
+        // Excluir uma saída (com histórico em exclusões)
+        parse_str(file_get_contents('php://input'), $data);
+        $id = $data['id'] ?? 0;
+        $motivo = $data['motivo'] ?? '';
+        $usuario_logado = $data['usuario_logado'] ?? '';
 
-        if (isset($data['id'])) {
-            $saidaId = $data['id'];
-
-            if ($saidaId <= 0) {
-                echo json_encode(['success' => false, 'message' => 'ID inválido.']);
-                exit;
-            }
-
-            $query = "DELETE FROM saidas WHERE id = ?";
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param('i', $saidaId);
-
-            if ($stmt->execute()) {
-                echo json_encode(['success' => true, 'message' => 'Saída excluída com sucesso.']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Erro ao excluir saída.']);
-            }
-
-            $stmt->close();
+        if (!$id || !$motivo || !$usuario_logado) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Dados incompletos para exclusão.']);
+            exit;
         }
+
+        // Obter informações da saída antes de excluir
+        $stmt_info = $connection->prepare("SELECT valor FROM saidas WHERE id = ?");
+        $stmt_info->bind_param('i', $id);
+        $stmt_info->execute();
+        $result_info = $stmt_info->get_result();
+
+        if ($result_info->num_rows === 0) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Saída não encontrada.']);
+            exit;
+        }
+
+        $saida = $result_info->fetch_assoc();
+        $valor = $saida['valor'];
+
+        // Registrar a exclusão na tabela de exclusões
+        $stmt_exclusao = $connection->prepare("INSERT INTO exclusoes (tipo, referencia, motivo, valor, usuario_logado, data) 
+                                               VALUES ('saidas', ?, ?, ?, ?, NOW())");
+        $stmt_exclusao->bind_param('isds', $id, $motivo, $valor, $usuario_logado);
+
+        if ($stmt_exclusao->execute()) {
+            // Excluir a saída
+            $stmt_delete = $connection->prepare("DELETE FROM saidas WHERE id = ?");
+            $stmt_delete->bind_param('i', $id);
+
+            if ($stmt_delete->execute()) {
+                echo json_encode(['success' => true, 'message' => 'Saída excluída e registrada no histórico.']);
+            } else {
+                http_response_code(500);
+                echo json_encode(['success' => false, 'message' => 'Erro ao excluir a saída.']);
+            }
+
+            $stmt_delete->close();
+        } else {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro ao registrar a exclusão.']);
+        }
+
+        $stmt_exclusao->close();
+        $stmt_info->close();
         break;
 
     default:
-        echo json_encode(['success' => false, 'message' => 'Método não suportado.']);
+        // Método não permitido
+        http_response_code(405);
+        echo json_encode(['success' => false, 'message' => 'Método não permitido.']);
         break;
 }
 
-$conn->close();
+// Fechar conexão
+$connection->close();
 ?>
