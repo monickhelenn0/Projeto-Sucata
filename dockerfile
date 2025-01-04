@@ -1,7 +1,7 @@
 FROM php:8.1-apache
 
 # Instale as extensões necessárias
-git RUN docker-php-ext-install mysqli
+RUN docker-php-ext-install mysqli
 
 # Copie os arquivos do Backend para o Apache
 COPY ./Backend/ /var/www/html/
