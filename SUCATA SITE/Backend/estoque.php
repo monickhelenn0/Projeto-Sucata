@@ -68,47 +68,23 @@ switch ($method) {
     case 'PUT':
         // Atualizar entrada de estoque
         $data = json_decode(file_get_contents('php://input'), true);
-        $id = $data['id'] ?? 0;
+        $material_id = $data['material_id'] ?? 0;
         $quantidade = $data['quantidade'] ?? 0;
 
-        if (!$id || $quantidade <= 0) {
+        if (!$material_id || $quantidade < 0) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Dados incompletos ou inválidos.']);
             exit;
         }
 
-        $stmt = $connection->prepare("UPDATE estoque SET quantidade = ?, data_adicionado = NOW() WHERE id = ?");
-        $stmt->bind_param('ii', $quantidade, $id);
+        $stmt = $connection->prepare("UPDATE estoque SET quantidade = quantidade + ?, data_adicionado = NOW() WHERE material_id = ?");
+        $stmt->bind_param('ii', $quantidade, $material_id);
 
         if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Entrada de estoque atualizada com sucesso.']);
+            echo json_encode(['success' => true, 'message' => 'Quantidade de estoque atualizada com sucesso.']);
         } else {
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Erro ao atualizar entrada de estoque.']);
-        }
-
-        $stmt->close();
-        break;
-
-    case 'DELETE':
-        // Excluir entrada de estoque
-        parse_str(file_get_contents('php://input'), $data);
-        $id = $data['id'] ?? 0;
-
-        if (!$id) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'ID da entrada de estoque é necessário.']);
-            exit;
-        }
-
-        $stmt = $connection->prepare("DELETE FROM estoque WHERE id = ?");
-        $stmt->bind_param('i', $id);
-
-        if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Entrada de estoque excluída com sucesso.']);
-        } else {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Erro ao excluir entrada de estoque.']);
+            echo json_encode(['success' => false, 'message' => 'Erro ao atualizar quantidade de estoque.']);
         }
 
         $stmt->close();
