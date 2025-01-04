@@ -1,127 +1,126 @@
 <?php
-// estoque.php
-session_start();
-require 'db_connection.php';
+// Importar o arquivo de conexão com o banco
+require_once '../db_connection.php';
 
+// Configurar cabeçalhos para resposta JSON
 header('Content-Type: application/json');
 
-// Verificar se o usuário está autenticado
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Usuário não autenticado.']);
-    exit;
-}
-
+// Verificar método da requisição
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
-    case 'GET':
-        // Listar itens no estoque com filtros de ordenação ou período
-        $order = $_GET['order'] ?? 'nome'; // Ordem padrão: nome
-        $data_inicio = $_GET['data_inicio'] ?? null;
-        $data_fim = $_GET['data_fim'] ?? null;
+    case 'POST':
+        // Adicionar entrada ao estoque
+        $data = json_decode(file_get_contents('php://input'), true);
+        $material_id = $data['material_id'] ?? 0;
+        $quantidade = $data['quantidade'] ?? 0;
 
-        // Validar e definir a ordem
-        switch ($order) {
-            case 'data':
-                $orderQuery = "ORDER BY data_adicionado DESC";
-                break;
-            case 'mais_comprado':
-                $orderQuery = "ORDER BY quantidade_vendida DESC";
-                break;
-            case 'nome':
-            default:
-                $orderQuery = "ORDER BY nome ASC";
-                break;
+        if (!$material_id || $quantidade <= 0) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Dados incompletos ou inválidos.']);
+            exit;
         }
 
-        // Filtrar por período de datas, se fornecido
-        if ($data_inicio && $data_fim) {
-            $query = "SELECT * FROM estoque WHERE data_adicionado BETWEEN ? AND ? $orderQuery";
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param('ss', $data_inicio, $data_fim);
+        $stmt = $connection->prepare("INSERT INTO estoque (material_id, quantidade, data_adicionado) VALUES (?, ?, NOW())");
+        $stmt->bind_param('ii', $material_id, $quantidade);
+
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Estoque atualizado com sucesso.']);
         } else {
-            $query = "SELECT * FROM estoque $orderQuery";
-            $stmt = $conn->prepare($query);
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro ao adicionar ao estoque.']);
         }
 
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        $estoque = [];
-        while ($row = $result->fetch_assoc()) {
-            $estoque[] = $row;
-        }
-
-        echo json_encode(['success' => true, 'data' => $estoque]);
         $stmt->close();
         break;
 
-    case 'POST':
-        // Abastecer estoque com compras realizadas
-        $data = json_decode(file_get_contents('php://input'), true);
+    case 'GET':
+        // Listar entradas de estoque
+        $material_id = $_GET['material_id'] ?? 0;
 
-        if (isset($data['compra_id'])) {
-            $compra_id = $data['compra_id'];
+        if ($material_id) {
+            $stmt = $connection->prepare("SELECT id, quantidade, data_adicionado FROM estoque WHERE material_id = ?");
+            $stmt->bind_param('i', $material_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-            // Obter dados da compra
-            $queryCompra = "SELECT material_id, quantidade FROM compras WHERE id = ?";
-            $stmtCompra = $conn->prepare($queryCompra);
-            $stmtCompra->bind_param('i', $compra_id);
-            $stmtCompra->execute();
-            $resultCompra = $stmtCompra->get_result();
-
-            if ($resultCompra->num_rows > 0) {
-                $compra = $resultCompra->fetch_assoc();
-
-                // Atualizar ou inserir no estoque
-                $queryEstoque = "INSERT INTO estoque (nome, quantidade, data_adicionado) VALUES ((SELECT nome FROM materiais WHERE id = ?), ?, NOW()) ON DUPLICATE KEY UPDATE quantidade = quantidade + VALUES(quantidade)";
-                $stmtEstoque = $conn->prepare($queryEstoque);
-                $stmtEstoque->bind_param('ii', $compra['material_id'], $compra['quantidade']);
-
-                if ($stmtEstoque->execute()) {
-                    echo json_encode(['success' => true, 'message' => 'Estoque abastecido com sucesso.']);
-                } else {
-                    echo json_encode(['success' => false, 'message' => 'Erro ao abastecer estoque.']);
-                }
-
-                $stmtEstoque->close();
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Compra não encontrada.']);
+            $estoque = [];
+            while ($row = $result->fetch_assoc()) {
+                $estoque[] = $row;
             }
 
-            $stmtCompra->close();
+            echo json_encode(['success' => true, 'data' => $estoque]);
         } else {
-            echo json_encode(['success' => false, 'message' => 'ID da compra não fornecido.']);
+            // Listar estoque de todos os materiais
+            $result = $connection->query("SELECT estoque.id, materiais.nome, estoque.quantidade, estoque.data_adicionado 
+                                          FROM estoque 
+                                          INNER JOIN materiais ON estoque.material_id = materiais.id");
+
+            $estoque = [];
+            while ($row = $result->fetch_assoc()) {
+                $estoque[] = $row;
+            }
+
+            echo json_encode(['success' => true, 'data' => $estoque]);
         }
+        break;
+
+    case 'PUT':
+        // Atualizar entrada de estoque
+        $data = json_decode(file_get_contents('php://input'), true);
+        $id = $data['id'] ?? 0;
+        $quantidade = $data['quantidade'] ?? 0;
+
+        if (!$id || $quantidade <= 0) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Dados incompletos ou inválidos.']);
+            exit;
+        }
+
+        $stmt = $connection->prepare("UPDATE estoque SET quantidade = ?, data_adicionado = NOW() WHERE id = ?");
+        $stmt->bind_param('ii', $quantidade, $id);
+
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Entrada de estoque atualizada com sucesso.']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro ao atualizar entrada de estoque.']);
+        }
+
+        $stmt->close();
         break;
 
     case 'DELETE':
-        // Excluir item do estoque
-        $data = json_decode(file_get_contents('php://input'), true);
+        // Excluir entrada de estoque
+        parse_str(file_get_contents('php://input'), $data);
+        $id = $data['id'] ?? 0;
 
-        if (isset($data['id'])) {
-            $id = $data['id'];
-
-            $query = "DELETE FROM estoque WHERE id = ?";
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param('i', $id);
-
-            if ($stmt->execute()) {
-                echo json_encode(['success' => true, 'message' => 'Item excluído do estoque com sucesso.']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Erro ao excluir item do estoque.']);
-            }
-
-            $stmt->close();
-        } else {
-            echo json_encode(['success' => false, 'message' => 'ID do item não fornecido.']);
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'ID da entrada de estoque é necessário.']);
+            exit;
         }
+
+        $stmt = $connection->prepare("DELETE FROM estoque WHERE id = ?");
+        $stmt->bind_param('i', $id);
+
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Entrada de estoque excluída com sucesso.']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro ao excluir entrada de estoque.']);
+        }
+
+        $stmt->close();
         break;
 
     default:
-        echo json_encode(['success' => false, 'message' => 'Método não suportado.']);
+        // Método não permitido
+        http_response_code(405);
+        echo json_encode(['success' => false, 'message' => 'Método não permitido.']);
         break;
 }
 
-$conn->close();
+// Fechar conexão
+$connection->close();
 ?>
