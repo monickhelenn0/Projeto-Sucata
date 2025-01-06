@@ -1,5 +1,5 @@
 <?php
-$host = 'mysql.heliohost.org'; // Host correto do HelioHost
+$host = '64.62.151.106'; // Host correto do HelioHost
 $user = 'monickhelenn0_sucata'; // Usuário do banco
 $password = 'Sucata22';         // Senha do banco
 $database = 'monickhelenn0_projeto_sucata'; // Nome do banco
