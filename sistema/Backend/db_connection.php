@@ -1,9 +1,9 @@
 <?php
-$host = 'dpg-ctsiv65umphs73ifn0a10-a'; // Hostname do Render
-$port = '5432';                        // Porta fornecida
-$user = 'sucata';                      // Usuário
-$password = 'x00onMFxEEqkWli46XMTtnx5tWliDMvy'; // Senha fornecida
-$database = 'sucata';                  // Nome do banco de dados
+$host = 'localhost'; // Hostname do Render
+$port = '3306';  // Porta fornecida
+$user = 'sucata'; // Usuário
+$password = 'Sucata22'; // Senha fornecida
+$database = 'monickhelenn0_projeto_sucata';  // Nome do banco de dados
 
 // Estabelecer conexão
 $connection = new mysqli($host, $user, $password, $database, $port);
