@@ -1,27 +1,26 @@
 // URL do backend
-const backendUrl = 'https://projeto-sucata-oen5.onrender.com';
+const backendURL = "https://projeto-sucata-oen5.onrender.com"; // URL do backend Render
 
-// Função para finalizar o dia e enviar o resumo ao Telegram
-document.getElementById('finalizar-dia').addEventListener('click', async () => {
-    if (confirm('Deseja realmente finalizar o dia?')) {
-        try {
-            const response = await fetch('/api/index.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'finalizar_dia' })
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                alert('Resumo enviado ao Telegram com sucesso.');
-            } else {
-                alert(data.message);
-            }
-        } catch (error) {
-            alert('Erro ao finalizar o dia: ' + error.message);
-        }
+fetch(`${backendURL}/index.php`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ parametro: "valor" }),
+})
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("Erro na API");
     }
-});
+    return response.json();
+  })
+  .then((data) => {
+    console.log("Dados recebidos:", data);
+  })
+  .catch((error) => {
+    console.error("Erro:", error);
+  });
+
 
 // Função para registrar o valor inicial do caixa
 document.getElementById('iniciar-dia').addEventListener('click', async () => {
