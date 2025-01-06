@@ -21,10 +21,10 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 $action = $data['action'] ?? '';
 
-if (!in_array($action, ['login', 'logout']) && !isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Usuário não autenticado.']);
-    exit;
-}
+//if (!in_array($action, ['login', 'logout']) && !isset($_SESSION['user_id'])) {
+//    echo json_encode(['success' => false, 'message' => 'Usuário não autenticado.']);
+//    exit;
+//}
 
 switch ($action) {
     case 'login':
