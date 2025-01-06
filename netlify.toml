@@ -1,5 +1,5 @@
 [build]
-  base = "SUCATA SITE/Frontend" # Caminho correto para o diretório Frontend
+  base = "sistema/Frontend" # Caminho correto para o diretório Frontend
   publish = "."                 # Publicar o conteúdo do diretório base
   command = ""                  # Sem comando de build (HTML/CSS/JS simples)
 
