@@ -1,8 +1,8 @@
 <?php
 // Habilitar CORS
-header('Access-Control-Allow-Origin: *'); // Substitua '*' por 'https://lucienesucatas.netlify.app' para restringir ao Netlify
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header("Access-Control-Allow-Origin: https://lucienesucatas.netlify.app");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 
 // Responder a requisições OPTIONS para CORS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
