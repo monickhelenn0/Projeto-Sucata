@@ -8,7 +8,10 @@ $port = '3306';                 // Porta padrão do MySQL
 $connection = new mysqli($host, $user, $password, $database, $port);
 
 if ($connection->connect_error) {
-    die("Erro ao conectar ao banco de dados: " . $connection->connect_error);
+    die(json_encode([
+        'success' => false,
+        'message' => 'Erro ao conectar ao banco de dados: ' . $connection->connect_error,
+    ]));
 }
 
 ?>
