@@ -10,23 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-if (!isset($conn) || $conn === null) {
-    echo json_encode(['success' => false, 'message' => 'Conexão ao banco não estabelecida.']);
-    exit;
-}
-
-// Exemplo de uso da conexão
-$result = $conn->query("SELECT * FROM tabela");
-if (!$result) {
-    echo json_encode(['success' => false, 'message' => 'Erro na consulta ao banco.']);
-    exit;
-}
-
-// Fechando a conexão corretamente
-if ($conn) {
-    $conn->close();
-}
-
 // Iniciar sessão
 session_start();
 require 'db_connection.php'; // Certifique-se de que este arquivo está configurado corretamente
