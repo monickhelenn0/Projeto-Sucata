@@ -4,6 +4,9 @@ header("Access-Control-Allow-Origin: https://lucienesucatas.netlify.app");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
+include 'sistema/Backend/db_connection.php'; // Ajuste o caminho se necessário
+
+
 // Responder a requisições OPTIONS para CORS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -27,6 +30,9 @@ $action = $data['action'] ?? '';
 //}
 
 switch ($action) {
+    case'teste':
+        echo json_encode("teste");
+        exit;
     case 'login':
         $username = $data['username'] ?? '';
         $password = $data['password'] ?? '';
